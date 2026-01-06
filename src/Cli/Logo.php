@@ -15,14 +15,30 @@ class Logo
     {
         echo "\n";
 
-        echo Colors::$cyan;
-        echo "     ███╗   ███╗ ██╗   ██╗  ██████╗ \n";
-        echo "     ████╗ ████║ ██║   ██║ ██╔════╝ \n";
-        echo "     ██╔████╔██║ ██║   ██║ ██║      \n";
-        echo "     ██║╚██╔╝██║ ╚██╗ ██╔╝ ██║      \n";
-        echo "     ██║ ╚═╝ ██║  ╚████╔╝  ╚██████╗ \n";
-        echo "     ╚═╝     ╚═╝   ╚═══╝    ╚═════╝ \n";
-        echo Colors::$reset;
+        // Logo ASCII colorisé par lettre : B (bleu), M (cyan), V (orange), C (vert)
+        echo Colors::$blue . "     ███╗   ███╗" . Colors::$reset;
+        echo Colors::$orange . " ██╗   ██╗" . Colors::$reset;
+        echo Colors::$green . "  ██████╗ \n" . Colors::$reset;
+
+        echo Colors::$blue . "     ████╗ ████║" . Colors::$reset;
+        echo Colors::$orange . " ██║   ██║" . Colors::$reset;
+        echo Colors::$green . " ██╔════╝\n" . Colors::$reset;
+
+        echo Colors::$blue . "     ██╔████╔██║" . Colors::$reset;
+        echo Colors::$orange . " ██║   ██║" . Colors::$reset;
+        echo Colors::$green . " ██║\n" . Colors::$reset;
+
+        echo Colors::$blue . "     ██║╚██╔╝██║" . Colors::$reset;
+        echo Colors::$orange . " ╚██╗ ██╔╝" . Colors::$reset;
+        echo Colors::$green . " ██║\n" . Colors::$reset;
+
+        echo Colors::$blue . "     ██║ ╚═╝ ██║" . Colors::$reset;
+        echo Colors::$orange . "  ╚████╔╝" . Colors::$reset;
+        echo Colors::$green . "  ╚██████╗ \n" . Colors::$reset;
+
+        echo Colors::$blue . "     ╚═╝     ╚═╝" . Colors::$reset;
+        echo Colors::$orange . "   ╚═══╝" . Colors::$reset;
+        echo Colors::$green . "    ╚═════╝ \n" . Colors::$reset;
 
         echo "\n";
         echo Colors::$blue . "B" . Colors::$orange . "MVC" . Colors::$reset;
