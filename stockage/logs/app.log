@@ -5,3 +5,5 @@ Requête: SELECT * FROM factures in C:\xampp\htdocs\BMVC\core\BaseBD.php:132
 Requête: SELECT * FROM gallerys in C:\xampp\htdocs\BMVC\core\BaseBD.php:132
 [2026-01-06 04:16:19] Vue non trouvée: C:\xampp\htdocs\BMVC\app\Vues\welcome.php in C:\xampp\htdocs\BMVC\core\Vue.php:42
 [2026-01-06 04:16:21] Vue non trouvée: C:\xampp\htdocs\BMVC\app\Vues\welcome.php in C:\xampp\htdocs\BMVC\core\Vue.php:42
+[2026-01-06 04:41:19] Erreur SQL: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'bmvc.produits' doesn't exist
+Requête: SELECT * FROM produits in C:\xampp\htdocs\BMVC\core\BaseBD.php:132

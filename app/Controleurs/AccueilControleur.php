@@ -4,7 +4,7 @@ namespace App\Controleurs;
 
 use App\BaseControleur;
 
-class WelcomeControleur extends BaseControleur
+class AccueilControleur extends BaseControleur
 {
     public function index()
     {
