@@ -3,56 +3,43 @@
 namespace Bmvc;
 
 use Composer\Script\Event;
+use Bmvc\Cli\Logo;
+use Bmvc\Cli\Colors;
 
 class InstallerScript
 {
+    /**
+     * Affiche le logo BMVC lors de l'installation
+     */
     public static function afficherLogo(Event $event): void
     {
-        $logo = <<<'LOGO'
+        echo "\n";
 
-                          ╔═════════════════════════╗
-                         ╱                           ╲
-                        ╱    ░░░ BMVC ░░░           ╲
-                       ╱                              ╲
-                      ╱   ╔═══════════════════════╗   ╲
-                     ╱    ║   V     V     V       ║    ╲
-                    ╱     ║ V               V     ║     ╲
-                   ╱      ║ V     BMVC      V     ║      ╲
-                  ╱       ║ V               V     ║       ╲
-                 ╱        ║   V     V     V       ║        ╲
-                ╱         ╚═══════════════════════╝         ╲
-               ╱                                              ╲
-              ╚════════════════════════════════════════════════╝
+        // Affiche le logo colorisé
+        Logo::afficher();
 
+        // Messages d'installation réussie
+        echo Colors::$cyan . "PROCHAINES ÉTAPES :" . Colors::$reset . "\n\n";
 
-          Framework PHP MVC 100% en Français
-          
-          ✨ Installation réussie ! ✨
+        Logo::info("Accédez au dossier de votre projet");
+        echo Colors::$white . "   \$ cd votre-projet" . Colors::$reset . "\n";
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        echo "\n";
+        Logo::info("Démarrez le serveur de développement");
+        echo Colors::$white . "   \$ php -S localhost:8000 -t public" . Colors::$reset . "\n";
 
-PROCHAINES ÉTAPES :
+        echo "\n";
+        Logo::info("Ouvrez votre navigateur");
+        echo Colors::$white . "   http://localhost:8000" . Colors::$reset . "\n";
 
-   1. Accédez au dossier de votre projet :
-      $ cd votre-projet
+        echo "\n";
+        Logo::info("Consultez la documentation");
+        echo Colors::$white . "   https://github.com/Josuebondo/bmvc/blob/main/README_FR.md" . Colors::$reset . "\n";
 
-   2. Démarrez le serveur de développement :
-      $ php -S localhost:8000 -t public
+        echo "\n" . Colors::$cyan . "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" . Colors::$reset . "\n\n";
 
-   3. Ouvrez votre navigateur :
-      http://localhost:8000
+        Logo::succes("Installation réussie ! Bienvenue dans BMVC !");
 
-   4. Consultez la documentation :
-      https://github.com/Josuebondo/bmvc/blob/main/README_FR.md
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-✅ Bienvenue dans BMVC ! Bon développement ! 🎉
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-LOGO;
-
-        echo "\n" . $logo . "\n\n";
+        echo "\n" . Colors::$cyan . "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" . Colors::$reset . "\n\n";
     }
 }
