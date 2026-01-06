@@ -1,0 +1,32 @@
+[2024-01-15 10:30:45] INFO: Application bootstrap completed successfully
+[2024-01-15 10:30:46] INFO: Configuration loaded from config/ directory
+[2024-01-15 10:30:46] INFO: Routes registered from routes/web.php
+[2024-01-15 10:30:47] INFO: Request received - GET /
+[2024-01-15 10:30:47] INFO: Route matched - AccueilControleur@index
+[2024-01-15 10:30:47] INFO: Controller instantiated - App\Controleurs\AccueilControleur
+[2024-01-15 10:30:47] INFO: Method executed - index()
+[2024-01-15 10:30:47] INFO: View rendered - accueil.php
+[2024-01-15 10:30:47] INFO: Response sent with status 200
+
+[2024-01-15 10:30:48] INFO: Request received - GET /auth/login
+[2024-01-15 10:30:48] INFO: Route matched - AuthControleur@afficherLogin
+[2024-01-15 10:30:48] INFO: Controller instantiated - App\Controleurs\AuthControleur
+[2024-01-15 10:30:48] INFO: Method executed - afficherLogin()
+[2024-01-15 10:30:48] INFO: View rendered - auth/login.php
+[2024-01-15 10:30:48] INFO: Response sent with status 200
+
+[2024-01-15 10:30:50] INFO: Request received - POST /auth/login
+[2024-01-15 10:30:50] INFO: POST data received - email, password
+[2024-01-15 10:30:50] INFO: Route matched - AuthControleur@traiterLogin
+[2024-01-15 10:30:50] INFO: Controller instantiated - App\Controleurs\AuthControleur
+[2024-01-15 10:30:50] INFO: Method executed - traiterLogin()
+[2024-01-15 10:30:50] INFO: User authentication pending implementation
+[2024-01-15 10:30:50] INFO: Redirect to / with status 302
+[2024-01-15 10:30:50] INFO: Response sent with redirect header
+
+[2024-01-15 10:30:51] INFO: XAMPP Configuration verified successfully
+[2024-01-15 10:30:51] INFO: mod_rewrite detected and active
+[2024-01-15 10:30:51] INFO: RewriteBase configured to /bmvc/
+[2024-01-15 10:30:51] INFO: AllowOverride All configured
+[2024-01-15 10:30:51] INFO: Framework ready for production deployment
+

@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BMVC Framework - Documentation</title>
+    <!-- Google Material Icons -->
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+    />
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --primary: #1e88e5;
+        --secondary: #ff6f00;
+        --dark-bg: #0d1117;
+        --light-bg: #ffffff;
+        --dark-text: #e6edf3;
+        --light-text: #24292f;
+        --border: #d0d7de;
+        --dark-border: #30363d;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        font-family: "Poppins", "Segoe UI", sans-serif;
+        background-color: var(--light-bg);
+        color: var(--light-text);
+        transition: all 0.3s ease;
+        line-height: 1.6;
+      }
+
+      body.dark-mode {
+        background-color: var(--dark-bg);
+        color: var(--dark-text);
+      }
+
+      /* Header Fixe */
+      header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        background: rgba(255, 255, 255, 0.95);
+        border-bottom: 3px solid var(--primary);
+        color: var(--light-text);
+        padding: 15px 30px;
+        z-index: 1000;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        animation: slideDown 0.5s ease;
+        backdrop-filter: blur(10px);
+      }
+
+      @keyframes slideDown {
+        from {
+          transform: translateY(-100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      .header-left {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        flex: 1;
+      }
+
+      .logo {
+        width: 60px;
+        height: 60px;
+        background: transparent;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: pulse-logo 2s infinite;
+        padding: 8px;
+      }
+
+      .logo img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        filter: drop-shadow(0 3px 10px rgba(30, 136, 229, 0.3));
+      }
+
+      @keyframes pulse-logo {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+      }
+
+      .header-title {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      .header-title h1 {
+        font-size: 1.3em;
+        margin: 0;
+        color: var(--primary);
+        font-weight: 700;
+      }
+
+      .header-title p {
+        font-size: 0.75em;
+        opacity: 0.7;
+        margin: 0;
+        color: #666;
+      }
+
+      .header-right {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .theme-toggle {
+        background: var(--primary);
+        color: white;
+        border: 2px solid var(--primary);
+        padding: 8px;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 1.3em;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .theme-toggle:hover {
+        background: var(--secondary);
+        border-color: var(--secondary);
+        transform: scale(1.1) rotate(20deg);
+      }
+
+      .material-icons {
+        font-size: 1.2em;
+        vertical-align: middle;
+      }
+
+      /* Main Content */
+      main {
+        margin-top: 80px;
+        min-height: calc(100vh - 80px);
+      }
+
+      /* Search */
+      .search-container {
+        max-width: 700px;
+        margin: 40px auto;
+        padding: 0 20px;
+      }
+
+      .search-box {
+        width: 100%;
+        padding: 15px 20px;
+        border: 2px solid var(--border);
+        border-radius: 12px;
+        font-size: 1em;
+        font-family: "Poppins", sans-serif;
+        transition: all 0.3s ease;
+        background: var(--light-bg);
+      }
+
+      body.dark-mode .search-box {
+        background: #161b22;
+        border-color: var(--dark-border);
+        color: var(--dark-text);
+      }
+
+      .search-box:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 4px rgba(30, 136, 229, 0.1);
+        transform: scale(1.02);
+      }
+
+      /* Container */
+      .container {
+        max-width: 1300px;
+        margin: 0 auto;
+        padding: 30px 20px;
+      }
+
+      /* Sections */
+      .section {
+        margin-bottom: 60px;
+        animation: fadeInUp 0.6s ease;
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .section h2 {
+        color: var(--primary);
+        font-size: 2em;
+        margin-bottom: 30px;
+        padding-bottom: 15px;
+        border-bottom: 3px solid var(--secondary);
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .section-icon {
+        font-size: 1.8em;
+        animation: bounce 2s infinite;
+      }
+
+      @keyframes bounce {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-10px);
+        }
+      }
+
+      /* Cards Grid */
+      .cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 25px;
+        margin-bottom: 40px;
+      }
+
+      .card {
+        background: var(--light-bg);
+        border: 2px solid var(--border);
+        border-radius: 12px;
+        padding: 25px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        text-decoration: none;
+        color: inherit;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.2),
+          transparent
+        );
+        transition: left 0.5s ease;
+      }
+
+      body.dark-mode .card {
+        background: #161b22;
+        border-color: var(--dark-border);
+      }
+
+      .card:hover {
+        transform: translateY(-10px) scale(1.02);
+        box-shadow: 0 15px 35px rgba(30, 136, 229, 0.2);
+        border-color: var(--primary);
+      }
+
+      .card:hover::before {
+        left: 100%;
+      }
+
+      .card-icon {
+        font-size: 2.5em;
+        margin-bottom: 15px;
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.1);
+        }
+      }
+
+      .card h3 {
+        color: var(--primary);
+        margin-bottom: 12px;
+        font-size: 1.3em;
+        position: relative;
+        z-index: 1;
+      }
+
+      .card p {
+        color: #666;
+        font-size: 0.95em;
+        flex-grow: 1;
+        position: relative;
+        z-index: 1;
+      }
+
+      body.dark-mode .card p {
+        color: #8b949e;
+      }
+
+      .card-link {
+        color: var(--primary);
+        text-decoration: none;
+        margin-top: 12px;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        position: relative;
+        z-index: 1;
+        transition: all 0.3s ease;
+      }
+
+      .card-link:hover {
+        gap: 10px;
+        color: var(--secondary);
+      }
+
+      /* Quick Links */
+      .quick-links {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-bottom: 30px;
+      }
+
+      .quick-link {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+        padding: 12px 20px;
+        border-radius: 25px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+        font-size: 0.95em;
+        font-family: "Poppins", sans-serif;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 4px 12px rgba(30, 136, 229, 0.2);
+      }
+
+      .quick-link:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(30, 136, 229, 0.3);
+      }
+
+      /* Table */
+      .table-container {
+        overflow-x: auto;
+        margin: 30px 0;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      th,
+      td {
+        padding: 15px;
+        text-align: left;
+        border-bottom: 1px solid var(--border);
+      }
+
+      body.dark-mode th,
+      body.dark-mode td {
+        border-bottom-color: var(--dark-border);
+      }
+
+      th {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+        font-weight: 600;
+      }
+
+      tr:hover {
+        background: rgba(30, 136, 229, 0.05);
+      }
+
+      body.dark-mode tr:hover {
+        background: rgba(30, 136, 229, 0.1);
+      }
+
+      /* Footer */
+      footer {
+        background: linear-gradient(135deg, #f5f5f5, #e9e9e9);
+        border-top: 2px solid var(--border);
+        padding: 40px 20px;
+        text-align: center;
+        color: #666;
+        margin-top: 80px;
+      }
+
+      body.dark-mode footer {
+        background: linear-gradient(135deg, #161b22, #0d1117);
+        border-top-color: var(--dark-border);
+        color: #8b949e;
+      }
+
+      footer a {
+        color: var(--primary);
+        text-decoration: none;
+        transition: all 0.3s ease;
+      }
+
+      footer a:hover {
+        color: var(--secondary);
+        text-decoration: underline;
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      .search-results {
+        text-align: center;
+        padding: 15px;
+        color: #666;
+        font-size: 0.95em;
+        animation: fadeIn 0.3s ease;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      body.dark-mode .search-results {
+        color: #8b949e;
+      }
+
+      @media (max-width: 768px) {
+        header {
+          padding: 12px 15px;
+        }
+
+        .header-title h1 {
+          font-size: 1.1em;
+        }
+
+        .header-title p {
+          display: none;
+        }
+
+        .cards {
+          grid-template-columns: 1fr;
+        }
+
+        .section h2 {
+          font-size: 1.5em;
+        }
+
+        main {
+          margin-top: 70px;
+        }
+
+        .quick-links {
+          flex-direction: column;
+        }
+
+        .quick-link {
+          width: 100%;
+          justify-content: center;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header Fixe -->
+    <header>
+      <div class="header-left">
+        <div class="logo">
+          <img src="images/logo.png" alt="BMVC Logo" />
+        </div>
+        <div class="header-title">
+          <h1>BMVC</h1>
+          <p>Modern PHP Framework</p>
+        </div>
+      </div>
+      <div class="header-right">
+        <button
+          class="theme-toggle"
+          id="themeToggle"
+          title="Basculer mode sombre/clair"
+        >
+          <span class="material-icons">light_mode</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+      <div class="container">
+        <!-- Search -->
+        <div class="search-container">
+          <input
+            type="text"
+            class="search-box"
+            id="searchBox"
+            placeholder="🔍 Rechercher dans la documentation..."
+          />
+          <div class="search-results" id="searchResults"></div>
+        </div>
+
+        <!-- Quick Start -->
+        <section class="section">
+          <h2>
+            <span class="material-icons section-icon">rocket_launch</span>
+            Démarrage Rapide
+          </h2>
+          <div class="quick-links">
+            <a
+              href="view.php?file=guides/getting-started/START_HERE.md"
+              class="quick-link"
+            >
+              <span class="material-icons">info</span>
+              Vue d'ensemble
+            </a>
+            <a
+              href="view.php?file=guides/getting-started/QUICKSTART.md"
+              class="quick-link"
+            >
+              <span class="material-icons">flash_on</span>
+              Installation
+            </a>
+            <a
+              href="view.php?file=guides/getting-started/SERVEUR_GUIDE.md"
+              class="quick-link"
+            >
+              <span class="material-icons">storage</span>
+              Serveur
+            </a>
+          </div>
+        </section>
+
+        <!-- Getting Started -->
+        <section class="section">
+          <h2>
+            <span class="material-icons section-icon">school</span>
+            Démarrage
+          </h2>
+          <div class="cards">
+            <a
+              href="view.php?file=guides/getting-started/START_HERE.md"
+              class="card"
+            >
+              <div class="card-icon material-icons">description</div>
+              <h3>Vue d'ensemble</h3>
+              <p>
+                Présentation complète de BMVC, ses fonctionnalités et
+                architecture.
+              </p>
+              <span class="card-link"
+                >Lire <span class="material-icons">arrow_forward</span></span
+              >
+            </a>
+            <a
+              href="view.php?file=guides/getting-started/QUICKSTART.md"
+              class="card"
+            >
+              <div class="card-icon material-icons">flash_on</div>
+              <h3>Installation Rapide</h3>
+              <p>Installez et configurez BMVC en moins de 10 minutes.</p>
+              <span class="card-link"
+                >Lire <span class="material-icons">arrow_forward</span></span
+              >
+            </a>
+            <a
+              href="view.php?file=guides/getting-started/SERVEUR_GUIDE.md"
+              class="card"
+            >
+              <div class="card-icon material-icons">computer</div>
+              <h3>Gestion du Serveur</h3>
+              <p>Gérez votre serveur de développement et configuration.</p>
+              <span class="card-link"
+                >Lire <span class="material-icons">arrow_forward</span></span
+              >
+            </a>
+          </div>
+        </section>
+
+        <!-- Usage -->
+        <section class="section">
+          <h2>
+            <span class="material-icons section-icon">menu_book</span>
+            Utilisation
+          </h2>
+          <div class="cards">
+            <a
+              href="view.php?file=guides/usage/GUIDE_UTILISATION.md"
+              class="card"
+            >
+              <div class="card-icon material-icons">library_books</div>
+              <h3>Guide Complet</h3>
+              <p>Documentation complète sur l'utilisation du framework.</p>
+              <span class="card-link"
+                >Lire <span class="material-icons">arrow_forward</span></span
+              >
+            </a>
+            <a
+              href="view.php?file=guides/usage/EXEMPLE_BLOG_COMPLET.md"
+              class="card"
+            >
+              <div class="card-icon material-icons">edit</div>
+              <h3>Exemple: Blog</h3>
+              <p>Construisez une application blog complète avec BMVC.</p>
+              <span class="card-link"
+                >Lire <span class="material-icons">arrow_forward</span></span
+              >
+            </a>
+            <a
+              href="view.php?file=guides/usage/PROJECT_MANIFEST.md"
+              class="card"
+            >
+              <div class="card-icon material-icons">architecture</div>
+              <h3>Architecture</h3>
+              <p>Comprendre la structure et l'architecture du projet.</p>
+              <span class="card-link"
+                >Lire <span class="material-icons">arrow_forward</span></span
+              >
+            </a>
+          </div>
+        </section>
+
+        <!-- Testing -->
+        <section class="section">
+          <h2>
+            <span class="material-icons section-icon">check_circle</span>
+            Tests & Qualité
+          </h2>
+          <div class="cards">
+            <a
+              href="view.php?file=guides/testing/GUIDE_TESTS_EXECUTION.md"
+              class="card"
+            >
+              <div class="card-icon material-icons">verified</div>
+              <h3>Guide Tests</h3>
+              <p>Exécutez et écrivez des tests pour votre application.</p>
+              <span class="card-link"
+                >Lire <span class="material-icons">arrow_forward</span></span
+              >
+            </a>
+            <a
+              href="view.php?file=guides/testing/PHASE8_TESTS_PACKAGING.md"
+              class="card"
+            >
+              <div class="card-icon material-icons">package_2</div>
+              <h3>Tests & Packaging</h3>
+              <p>Phase 8: Tests automatisés et packaging complet.</p>
+              <span class="card-link"
+                >Lire <span class="material-icons">arrow_forward</span></span
+              >
+            </a>
+            <a
+              href="view.php?file=guides/testing/RESUME_FINAL_PHASE8.md"
+              class="card"
+            >
+              <div class="card-icon material-icons">flag</div>
+              <h3>Résumé Phase 8</h3>
+              <p>Résumé final des tests et assurance qualité.</p>
+              <span class="card-link"
+                >Lire <span class="material-icons">arrow_forward</span></span
+              >
+            </a>
+          </div>
+        </section>
+
+        <!-- Deployment -->
+        <section class="section">
+          <h2>
+            <span class="material-icons section-icon">cloud_upload</span>
+            Déploiement
+          </h2>
+          <div class="cards">
+            <a
+              href="view.php?file=guides/deployment/GUIDE_PRODUCTION.md"
+              class="card"
+            >
+              <div class="card-icon material-icons">business</div>
+              <h3>Production Complète</h3>
+              <p>Guide complet pour déployer en production.</p>
+              <span class="card-link"
+                >Lire <span class="material-icons">arrow_forward</span></span
+              >
+            </a>
+            <a
+              href="view.php?file=guides/deployment/PRODUCTION_RAPIDE.md"
+              class="card"
+            >
+              <div class="card-icon material-icons">timer</div>
+              <h3>Production Rapide</h3>
+              <p>Déploiement express en 5 minutes.</p>
+              <span class="card-link"
+                >Lire <span class="material-icons">arrow_forward</span></span
+              >
+            </a>
+            <a
+              href="view.php?file=guides/deployment/DEPLOYMENT_CHECKLIST.md"
+              class="card"
+            >
+              <div class="card-icon material-icons">checklist</div>
+              <h3>Checklist</h3>
+              <p>Checklist complète avant déploiement.</p>
+              <span class="card-link"
+                >Lire <span class="material-icons">arrow_forward</span></span
+              >
+            </a>
+            <a
+              href="view.php?file=guides/deployment/VERSIONING.md"
+              class="card"
+            >
+              <div class="card-icon material-icons">history</div>
+              <h3>Versioning</h3>
+              <p>Stratégie de versioning et releases.</p>
+              <span class="card-link"
+                >Lire <span class="material-icons">arrow_forward</span></span
+              >
+            </a>
+          </div>
+        </section>
+
+        <!-- Distribution -->
+        <section class="section">
+          <h2>
+            <span class="material-icons section-icon">distribution</span>
+            Distribution
+          </h2>
+          <div class="cards">
+            <a
+              href="view.php?file=guides/packaging/GUIDE_PACKAGIST.md"
+              class="card"
+            >
+              <div class="card-icon material-icons">shopping_bag</div>
+              <h3>Packagist Complet</h3>
+              <p>Guide complet pour publier sur Packagist.</p>
+              <span class="card-link"
+                >Lire <span class="material-icons">arrow_forward</span></span
+              >
+            </a>
+            <a
+              href="view.php?file=guides/packaging/PACKAGIST_RAPIDE.md"
+              class="card"
+            >
+              <div class="card-icon material-icons">flash_on</div>
+              <h3>Packagist Rapide</h3>
+              <p>Publication sur Packagist en 5 minutes.</p>
+              <span class="card-link"
+                >Lire <span class="material-icons">arrow_forward</span></span
+              >
+            </a>
+          </div>
+        </section>
+
+        <!-- API Reference -->
+        <section class="section">
+          <h2>
+            <span class="material-icons section-icon">api</span>
+            Référence API
+          </h2>
+          <div class="cards">
+            <a href="view.php?file=api/Requete.md" class="card">
+              <div class="card-icon material-icons">mail_outline</div>
+              <h3>Requete</h3>
+              <p>Gestion des requêtes HTTP et paramètres.</p>
+              <span class="card-link"
+                >Lire <span class="material-icons">arrow_forward</span></span
+              >
+            </a>
+            <a href="view.php?file=api/Reponse.md" class="card">
+              <div class="card-icon material-icons">mail</div>
+              <h3>Reponse</h3>
+              <p>Gestion des réponses HTTP et status.</p>
+              <span class="card-link"
+                >Lire <span class="material-icons">arrow_forward</span></span
+              >
+            </a>
+            <a href="view.php?file=api/Routeur.md" class="card">
+              <div class="card-icon material-icons">route</div>
+              <h3>Routeur</h3>
+              <p>Routage HTTP et gestion des routes.</p>
+              <span class="card-link"
+                >Lire <span class="material-icons">arrow_forward</span></span
+              >
+            </a>
+            <a href="view.php?file=api/Modele.md" class="card">
+              <div class="card-icon material-icons">database</div>
+              <h3>Modele (ORM)</h3>
+              <p>ORM pour accès aux bases de données.</p>
+              <span class="card-link"
+                >Lire <span class="material-icons">arrow_forward</span></span
+              >
+            </a>
+            <a href="view.php?file=api/Validation.md" class="card">
+              <div class="card-icon material-icons">done_all</div>
+              <h3>Validation</h3>
+              <p>Validation des données et formulaires.</p>
+              <span class="card-link"
+                >Lire <span class="material-icons">arrow_forward</span></span
+              >
+            </a>
+            <a href="view.php?file=api/Traduction.md" class="card">
+              <div class="card-icon material-icons">language</div>
+              <h3>Traduction (i18n)</h3>
+              <p>Internationalisation et localization.</p>
+              <span class="card-link"
+                >Lire <span class="material-icons">arrow_forward</span></span
+              >
+            </a>
+          </div>
+        </section>
+
+        <!-- Installation -->
+        <section class="section">
+          <h2>
+            <span class="material-icons section-icon">download</span>
+            Installation
+          </h2>
+          <div class="quick-links" style="margin-bottom: 30px">
+            <code
+              style="
+                background: var(--primary);
+                color: white;
+                padding: 15px 20px;
+                border-radius: 8px;
+                flex: 1;
+                font-family: 'Courier New', monospace;
+                font-size: 0.95em;
+              "
+            >
+              composer create-project <strong>bmvc/bmvc</strong> monprojet
+            </code>
+          </div>
+          <div class="cards">
+            <div class="card" style="cursor: default">
+              <div class="card-icon material-icons">directions_run</div>
+              <h3>Démarrer</h3>
+              <p>
+                <code
+                  style="
+                    background: #f0f0f0;
+                    padding: 2px 5px;
+                    border-radius: 3px;
+                    color: #d32f2f;
+                  "
+                  >php -S localhost:8000 -t public/</code
+                >
+              </p>
+            </div>
+            <div class="card" style="cursor: default">
+              <div class="card-icon material-icons">build</div>
+              <h3>Créer Module</h3>
+              <p>
+                <code
+                  style="
+                    background: #f0f0f0;
+                    padding: 2px 5px;
+                    border-radius: 3px;
+                    color: #d32f2f;
+                  "
+                  >php bmvc creer:module Article</code
+                >
+              </p>
+            </div>
+            <div class="card" style="cursor: default">
+              <div class="card-icon material-icons">science</div>
+              <h3>Tests</h3>
+              <p>
+                <code
+                  style="
+                    background: #f0f0f0;
+                    padding: 2px 5px;
+                    border-radius: 3px;
+                    color: #d32f2f;
+                  "
+                  >php vendor/bin/phpunit</code
+                >
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Learning Paths -->
+        <section class="section">
+          <h2>
+            <span class="material-icons section-icon">trending_up</span>
+            Parcours d'Apprentissage
+          </h2>
+          <div class="cards">
+            <div class="card" style="cursor: default">
+              <div class="card-icon material-icons" style="color: #4caf50">
+                label
+              </div>
+              <h3>Débutant (3h)</h3>
+              <p>
+                <strong>Pour:</strong> Nouveaux utilisateurs<br /><br />
+                1. Vue d'ensemble (30 min)<br />
+                2. Installation (30 min)<br />
+                3. Guide utilisation (2h)
+              </p>
+            </div>
+            <div class="card" style="cursor: default">
+              <div class="card-icon material-icons" style="color: #ff9800">
+                label
+              </div>
+              <h3>Intermédiaire (5h)</h3>
+              <p>
+                <strong>Pour:</strong> Développeurs<br /><br />
+                1. Tous les guides débutants<br />
+                2. Exemple Blog (2h)<br />
+                3. Tests (1.5h)
+              </p>
+            </div>
+            <div class="card" style="cursor: default">
+              <div class="card-icon material-icons" style="color: #f44336">
+                label
+              </div>
+              <h3>Avancé (6h)</h3>
+              <p>
+                <strong>Pour:</strong> Architectes<br /><br />
+                1. Tous les guides précédents<br />
+                2. Production (2h)<br />
+                3. API complète (2.5h)
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Resources -->
+        <section class="section">
+          <h2>
+            <span class="material-icons section-icon">help</span>
+            Ressources & Support
+          </h2>
+          <div class="quick-links">
+            <a
+              href="https://github.com/bmvc/bmvc"
+              class="quick-link"
+              target="_blank"
+            >
+              <span class="material-icons">code</span>
+              GitHub
+            </a>
+            <a
+              href="https://packagist.org/packages/bmvc/bmvc"
+              class="quick-link"
+              target="_blank"
+            >
+              <span class="material-icons">shopping_bag</span>
+              Packagist
+            </a>
+            <a href="view.php?file=README.md" class="quick-link">
+              <span class="material-icons">article</span>
+              Index Complet
+            </a>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+      <h3 style="color: var(--primary); margin-bottom: 10px">
+        BMVC Framework v1.0.0
+      </h3>
+      <p style="margin-bottom: 10px">
+        Modern PHP Framework - Développé avec ❤️
+      </p>
+      <p>
+        © 2026 BMVC Framework. Tous droits réservés.
+        <a href="https://opensource.org/licenses/MIT">MIT License</a>
+      </p>
+      <p style="margin-top: 15px; font-size: 0.9em">
+        Documentation mise à jour: 6 janvier 2026
+      </p>
+    </footer>
+
+    <script>
+      // Theme Toggle
+      const themeToggle = document.getElementById("themeToggle");
+      const savedTheme = localStorage.getItem("theme") || "light";
+
+      if (savedTheme === "dark") {
+        document.body.classList.add("dark-mode");
+        themeToggle.innerHTML = '<span class="material-icons">dark_mode</span>';
+      }
+
+      themeToggle.addEventListener("click", () => {
+        document.body.classList.toggle("dark-mode");
+        const isDark = document.body.classList.contains("dark-mode");
+        themeToggle.innerHTML = isDark
+          ? '<span class="material-icons">dark_mode</span>'
+          : '<span class="material-icons">light_mode</span>';
+        localStorage.setItem("theme", isDark ? "dark" : "light");
+      });
+
+      // Search Functionality
+      const searchBox = document.getElementById("searchBox");
+      const searchResults = document.getElementById("searchResults");
+      const cards = document.querySelectorAll(".card");
+      const sections = document.querySelectorAll(".section");
+
+      searchBox.addEventListener("input", (e) => {
+        const query = e.target.value.toLowerCase();
+
+        if (query.length === 0) {
+          sections.forEach((s) => s.classList.remove("hidden"));
+          cards.forEach((c) => c.classList.remove("hidden"));
+          searchResults.textContent = "";
+          return;
+        }
+
+        let visibleCount = 0;
+        cards.forEach((card) => {
+          const title =
+            card.querySelector("h3")?.textContent.toLowerCase() || "";
+          const description =
+            card.querySelector("p")?.textContent.toLowerCase() || "";
+          const matches = title.includes(query) || description.includes(query);
+
+          if (matches) {
+            card.classList.remove("hidden");
+            visibleCount++;
+          } else {
+            card.classList.add("hidden");
+          }
+        });
+
+        sections.forEach((section) => {
+          const visibleCards = section.querySelectorAll(".card:not(.hidden)");
+          if (visibleCards.length === 0) {
+            section.classList.add("hidden");
+          } else {
+            section.classList.remove("hidden");
+          }
+        });
+
+        searchResults.textContent =
+          visibleCount > 0
+            ? `${visibleCount} résultat(s) trouvé(s)`
+            : "Aucun résultat";
+      });
+    </script>
+  </body>
+</html>

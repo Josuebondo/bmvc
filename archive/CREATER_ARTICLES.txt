@@ -1,0 +1,128 @@
+📝 COMMENT CRÉER DES ARTICLES AVEC BMVC
+
+═══════════════════════════════════════════════════════════════════
+
+🎯 MÉTHODE 1: Via le formulaire web (recommandé)
+───────────────────────────────────────────────────────────────────
+
+1. Démarrez XAMPP:
+   • Ouvrez XAMPP Control Panel
+   • Cliquez "Start" sur MySQL
+
+2. Initialisez la BD (UNE SEULE FOIS):
+   cd C:\xampp\htdocs\BMVC
+   php install-db.php
+
+3. Démarrez le serveur:
+   php -S localhost:8000
+
+4. Ouvrez le navigateur:
+   http://localhost:8000/articles/creer
+
+5. Remplissez le formulaire:
+   Titre: "Mon article" (min 5 caractères)
+   Contenu: "Contenu du nouvel article..." (min 20 caractères)
+
+6. Cliquez "Publier"
+
+7. ✅ Vous êtes redirigé à http://localhost:8000/articles
+   Votre article apparaît dans la liste!
+
+═══════════════════════════════════════════════════════════════════
+
+🔧 MÉTHODE 2: Via PHP en ligne de commande
+───────────────────────────────────────────────────────────────────
+
+Créez un fichier create-article.php:
+
+<?php
+require_once 'public/index.php';
+use App\Modeles\Article;
+
+$article = Article::creer([
+    'titre' => 'Mon article via PHP',
+    'contenu' => 'Cet article a été créé en ligne de commande!'
+]);
+
+echo "✅ Article créé! ID: " . $article->id . "\n";
+?>
+
+Exécutez:
+php create-article.php
+
+═══════════════════════════════════════════════════════════════════
+
+✨ RÉSULTAT:
+───────────────────────────────────────────────────────────────────
+
+Articles en base de données:
+• ID 1: Introduction à BMVC
+• ID 2: ORM en 5 minutes
+• ID 3: PHP 8.1 avec BMVC
+• ID 4: Mon article (créé via formulaire) ✨
+• ID 5: Mon article via PHP (créé en CLI) ✨
+
+Consultez les articles:
+http://localhost:8000/articles        → Liste tous les articles
+http://localhost:8000/articles/1      → Voir l'article avec ID 1
+http://localhost:8000/articles/4      → Voir votre nouvel article
+
+═══════════════════════════════════════════════════════════════════
+
+💾 VALIDATION DES FORMULAIRES:
+───────────────────────────────────────────────────────────────────
+
+TITRE:
+✅ Accepté: "Mon article super"  (5+ caractères)
+❌ Rejeté: "Abc"                 (moins de 5)
+❌ Rejeté: "a" * 250             (plus de 200)
+
+CONTENU:
+✅ Accepté: "Contenu du nouvel article..." (20+ caractères)
+❌ Rejeté: "test"                           (moins de 20)
+
+═══════════════════════════════════════════════════════════════════
+
+🧪 TESTER LES ERREURS DE VALIDATION:
+───────────────────────────────────────────────────────────────────
+
+1. Allez à: http://localhost:8000/articles/creer
+
+2. Laissez les champs vides → Erreur: "titre est requis"
+
+3. Mettez titre = "abc" → Erreur: "titre doit contenir au moins 5 caractères"
+
+4. Mettez contenu = "texte court" → Erreur: "contenu doit contenir au moins 20 caractères"
+
+5. Les anciennes valeurs sont restituées dans le formulaire après l'erreur ✨
+
+═══════════════════════════════════════════════════════════════════
+
+📊 VÉRIFIER LES ARTICLES EN BD:
+───────────────────────────────────────────────────────────────────
+
+Via PhpMyAdmin (XAMPP):
+1. Ouvrez: http://localhost/phpmyadmin/
+2. Base: bmvc
+3. Table: articles
+4. Vous voyez tous vos articles avec créé!
+
+Via la ligne de commande:
+mysql -u root
+use bmvc;
+SELECT * FROM articles;
+
+═══════════════════════════════════════════════════════════════════
+
+✅ TOUT FONCTIONNE!
+───────────────────────────────────────────────────────────────────
+
+Vous pouvez maintenant:
+• Créer des articles via le formulaire web ✅
+• Consulter la liste des articles ✅
+• Voir le détail d'un article ✅
+• Valider les données saisies ✅
+• Voir les erreurs en rouge ✅
+• Les anciennes valeurs sont conservées ✅
+
+═══════════════════════════════════════════════════════════════════
