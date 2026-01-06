@@ -15,6 +15,9 @@
 
 require_once __DIR__ . '/vendor/autoload.php';
 
+// Charger les variables d'environnement
+\Core\Env::charger(__DIR__ . '/.env');
+
 class BMVCCLI
 {
     protected string $commande = '';
@@ -545,12 +548,42 @@ PHP;
             $port = (int) $this->options['port'];
         }
 
-        $this->succes("🚀 Serveur BMVC démarré!");
-        $this->info("👉 http://localhost:{$port}");
+        // Extraire l'hôte de l'URL_APPLICATION depuis .env
+        $urlApplication = env('URL_APPLICATION', 'http://localhost');
+        $hote = parse_url($urlApplication, PHP_URL_HOST) ?? 'localhost';
+
+        // Récupérer la version depuis composer.json
+        $version = $this->obtenirVersion();
+        $nomApp = env('NOM_APPLICATION', 'BMVC');
+
+        $this->succes("🚀 $nomApp $version démarré!");
+        $this->info("👉 http://{$hote}:{$port}");
         $this->info("Appuyez sur Ctrl+C pour arrêter\n");
 
         $chemin = __DIR__ . '/public';
-        shell_exec("php -S localhost:{$port} -t {$chemin}");
+        shell_exec("php -S {$hote}:{$port} -t {$chemin}");
+    }
+
+    /**
+     * Récupérer la version depuis composer.json
+     */
+    private function obtenirVersion(): string
+    {
+        $composerPath = __DIR__ . '/composer.json';
+        
+        if (!file_exists($composerPath)) {
+            return 'v1.0.0';
+        }
+
+        $composer = json_decode(file_get_contents($composerPath), true);
+        
+        // Chercher la version dans les clés courantes
+        if (isset($composer['version'])) {
+            return 'v' . $composer['version'];
+        }
+
+        // Sinon retourner une version par défaut
+        return 'v1.0.0';
     }
 
     /**

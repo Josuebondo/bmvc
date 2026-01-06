@@ -56,9 +56,33 @@ class Logo
         echo Colors::$reset;
 
         echo Colors::$cyan . "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" . Colors::$reset;
-        echo Colors::$white . "Version : " . Colors::$orange . "1.0.0\n";
+        echo Colors::$white . "Version : " . Colors::$orange . self::obtenirVersion() . "\n";
         echo Colors::$white . "Framework : " . Colors::$cyan . "BMVC\n";
         echo Colors::$cyan . "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n" . Colors::$reset;
+    }
+
+    /**
+     * Récupérer la version depuis composer.json
+     */
+    private static function obtenirVersion(): string
+    {
+        $composerPath = dirname(__DIR__, 2) . '/composer.json';
+
+        if (!file_exists($composerPath)) {
+            return '1.0.0';
+        }
+
+        try {
+            $composer = json_decode(file_get_contents($composerPath), true);
+
+            if (isset($composer['version'])) {
+                return $composer['version'];
+            }
+        } catch (\Exception $e) {
+            // En cas d'erreur, retourner la version par défaut
+        }
+
+        return '1.0.0';
     }
 
     /**
