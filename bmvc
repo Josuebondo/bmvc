@@ -143,6 +143,12 @@ class BMVCCLI
      */
     public function executer(): void
     {
+        // Vérifier si une option de version ou aide est demandée
+        if (isset($this->options['version']) && $this->options['version'] === true) {
+            $this->afficherVersion();
+            exit(0);
+        }
+
         match ($this->commande) {
             'creer:controleur' => $this->creerControleur(),
             'creer:modele' => $this->creerModele(),
@@ -152,6 +158,7 @@ class BMVCCLI
             'demarrer' => $this->demarrerServeur(),
             'tinker' => $this->tinker(),
             'aide', '--help', '-h' => $this->afficherAide(),
+            'version', '--version', '-v' => $this->afficherVersion(),
             default => $this->erreur("Commande inconnue: {$this->commande}"),
         };
     }
@@ -570,13 +577,13 @@ PHP;
     private function obtenirVersion(): string
     {
         $composerPath = __DIR__ . '/composer.json';
-        
+
         if (!file_exists($composerPath)) {
             return 'v1.0.0';
         }
 
         $composer = json_decode(file_get_contents($composerPath), true);
-        
+
         // Chercher la version dans les clés courantes
         if (isset($composer['version'])) {
             return 'v' . $composer['version'];
@@ -645,6 +652,7 @@ PHP;
   ℹ️  AUTRES
     aide                      Afficher cette aide (-a)
     --help, -h                Alias de 'aide'
+    version, --version, -v    Afficher la version
 
 📝 EXEMPLES:
 
@@ -662,10 +670,33 @@ PHP;
   $ php bmvc -cmg CreateUsersTable
   $ php bmvc tinker
   $ php bmvc -t
+  $ php bmvc version
+  $ php bmvc -v
 
 🎯 DOCUMENTATION: https://github.com/bmvc/framework
 
 TEXT;
+    }
+
+    /**
+     * Afficher la version du framework
+     */
+    protected function afficherVersion(): void
+    {
+        $version = $this->obtenirVersion();
+        $nomApp = env('NOM_APPLICATION', 'BMVC');
+
+        echo "\n";
+        echo "\033[36m╔════════════════════════════════════╗\033[0m\n";
+        echo "\033[36m║\033[0m  " . sprintf("%-32s", "$nomApp - Version Information") . " \033[36m║\033[0m\n";
+        echo "\033[36m╚════════════════════════════════════╝\033[0m\n\n";
+
+        echo "\033[33mFramework:\033[0m    BMVC\n";
+        echo "\033[33mVersion:\033[0m     $version\n";
+        echo "\033[33mEnvironnement:\033[0m " . env('ENVIRONNEMENT', 'production') . "\n";
+        echo "\033[33mLocale:\033[0m      " . env('LOCALE', 'fr') . "\n";
+
+        echo "\n";
     }
 
     /**
