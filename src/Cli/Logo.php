@@ -14,33 +14,34 @@ class Logo
     public static function afficher(): void
     {
         echo "\n";
+
         echo Colors::$cyan;
-        echo "      ██████╗ ███╗   ███╗\n";
-        echo "     ██╔═══██╗████╗ ████║\n";
-        echo "     ██║   ██║██╔████╔██║\n";
-        echo "     ██║   ██║██║╚██╔╝██║\n";
-        echo "     ╚██████╔╝██║ ╚═╝ ██║\n";
-        echo "      ╚═════╝ ╚═╝     ╚═╝\n";
+        echo "      ██████╗ ██████╗ ███╗   ███╗ ██╗   ██╗  ██████╗ \n";
+        echo "     ██╔═══██╗██╔══██╗████╗ ████║ ██║   ██║ ██╔════╝ \n";
+        echo "     ██║   ██║██████╔╝██╔████╔██║ ██║   ██║ ██║      \n";
+        echo "     ██║   ██║██╔══██╗██║╚██╔╝██║ ╚██╗ ██╔╝ ██║      \n";
+        echo "     ╚██████╔╝██████╔╝██║ ╚═╝ ██║  ╚████╔╝  ╚██████╗ \n";
+        echo "      ╚═════╝ ╚═════╝ ╚═╝     ╚═╝   ╚═══╝    ╚═════╝ \n";
         echo Colors::$reset;
 
         echo "\n";
-        echo Colors::$blue . "BM" . Colors::$reset;
-        echo Colors::$orange . "VC" . Colors::$reset . " ";
-        echo Colors::$white . "Framework PHP moderne et léger" . Colors::$reset . "\n";
+        echo Colors::$blue . "B" . Colors::$orange . "MVC" . Colors::$reset;
+        echo Colors::$white . "  — Bondo MVC Framework\n";
 
-        echo Colors::$cyan . "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" . Colors::$reset . "\n";
-        echo Colors::$green . "✔ MVC simple & structuré\n";
-        echo "✔ CLI puissant\n";
-        echo "✔ Layouts & Sections\n";
-        echo "✔ Inspiré Laravel / Symfony\n";
-        echo "✔ 100% PHP natif" . Colors::$reset . "\n";
+        echo Colors::$cyan . "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" . Colors::$reset;
 
-        echo "\n";
-        echo Colors::$white . "Version : " . Colors::$reset;
-        echo Colors::$orange . "1.0.5" . Colors::$reset . "\n";
-        echo Colors::$white . "Auteur  : " . Colors::$reset;
-        echo Colors::$cyan . "Bondo Josué" . Colors::$reset . "\n";
-        echo Colors::$cyan . "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" . Colors::$reset . "\n\n";
+        echo Colors::$green;
+        echo "✔ Framework PHP MVC moderne\n";
+        echo "✔ CLI natif : php bmvc\n";
+        echo "✔ Génération Controller / Model / Views\n";
+        echo "✔ Inspiré de Laravel & Symfony\n";
+        echo "✔ Léger • Rapide • Clair\n";
+        echo Colors::$reset;
+
+        echo Colors::$cyan . "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" . Colors::$reset;
+        echo Colors::$white . "Version : " . Colors::$orange . "1.0.0\n";
+        echo Colors::$white . "Framework : " . Colors::$cyan . "BMVC\n";
+        echo Colors::$cyan . "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n" . Colors::$reset;
     }
 
     /**
