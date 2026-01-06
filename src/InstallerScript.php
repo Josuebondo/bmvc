@@ -26,10 +26,14 @@ class InstallerScript
 
         echo "\n";
         Logo::info("Démarrez le serveur de développement");
+
+        echo Colors::$white . "   \$ php bmvc -d " . Colors::$reset . "\n";
+        echo Colors::$white . "   OU" . Colors::$reset . "\n";
         echo Colors::$white . "   \$ php -S localhost:8000 -t public" . Colors::$reset . "\n";
 
         echo "\n";
         Logo::info("Ouvrez votre navigateur");
+        echo Colors::$white . "   Accédez à l'URL suivante :" . Colors::$reset . "\n";
         echo Colors::$white . "   http://localhost:8000" . Colors::$reset . "\n";
 
         echo "\n";
