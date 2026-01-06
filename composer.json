@@ -27,13 +27,17 @@
   "autoload": {
     "psr-4": {
       "App\\": "app/",
-      "Core\\": "core/"
+      "Core\\": "core/",
+      "Bmvc\\": "src/"
     },
     "files": [
       "core/Helpers.php"
     ]
   },
-  "scripts": {},
+  "scripts": {
+    "post-install-cmd": ["Bmvc\\InstallerScript::afficherLogo"],
+    "post-create-project-cmd": ["Bmvc\\InstallerScript::afficherLogo"]
+  },
   "minimum-stability": "stable",
   "prefer-stable": true,
   "config": {
