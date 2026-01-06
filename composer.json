@@ -35,8 +35,12 @@
     ]
   },
   "scripts": {
-    "post-install-cmd": ["Bmvc\\InstallerScript::afficherLogo"],
-    "post-create-project-cmd": ["Bmvc\\InstallerScript::afficherLogo"]
+    "post-install-cmd": [
+      "Bmvc\\InstallerScript::afficherLogo"
+    ],
+    "post-create-project-cmd": [
+      "Bmvc\\InstallerScript::afficherLogo"
+    ]
   },
   "minimum-stability": "stable",
   "prefer-stable": true,
