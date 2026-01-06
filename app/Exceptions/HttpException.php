@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Exceptions;
+
 /**
  * Exception HTTP
  * 
@@ -19,7 +21,7 @@
  * - 500 : Erreur serveur
  */
 
-class HttpException extends Exception
+class HttpException extends \Exception
 {
     // À compléter avec votre logique d'exception
 }
