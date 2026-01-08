@@ -628,10 +628,11 @@ PHP;
      */
     protected function afficherAide(): void
     {
+        $version = $this->obtenirVersion();
         echo <<<'TEXT'
 ╔═══════════════════════════════════════════════════════════════╗
-║                     🚀 BMVC CLI v1.0                         ║
-║          Mini-Laravel en Français - Interface Ligne          ║
+║                        BMVC CLI v1.0                          ║
+║           Mini-Laravel en Français - Interface Ligne          ║
 ╚═══════════════════════════════════════════════════════════════╝
 
 📋 COMMANDES DISPONIBLES:
@@ -688,7 +689,7 @@ TEXT;
 
         echo "\n";
         echo "\033[36m╔════════════════════════════════════╗\033[0m\n";
-        echo "\033[36m║\033[0m  " . sprintf("%-32s", "$nomApp - Version Information") . " \033[36m║\033[0m\n";
+        echo "\033[36m║\033[0m   " . sprintf("%-32s", "$nomApp - Version Information  ") . " \033[36m║\033[0m\n";
         echo "\033[36m╚════════════════════════════════════╝\033[0m\n\n";
 
         echo "\033[33mFramework:\033[0m    BMVC\n";

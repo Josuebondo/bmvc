@@ -1,479 +1,208 @@
-# 🗄️ Classe Modele
+# Core\Modele - API Reference
 
-**ORM (Object-Relational Mapping) pour accès aux bases de données**
+ORM pour interagir avec la base de données.
 
----
+## Méthodes Statiques
 
-## 📖 Description
-
-La classe `Modele` est la base de tous les modèles de données. Elle fournit une interface intuitive pour interagir avec la base de données sans écrire de SQL brut.
-
-**Localisation:** `core/Modele.php`
-
----
-
-## 🔧 Méthodes Principales
-
-### Requêtes de Base
-
-#### `tous($colonnes = ['*'])`
-
-Récupère tous les enregistrements.
-
-```php
-$articles = Article::tous();
-$articles = Article::tous(['id', 'titre', 'auteur']);
-```
-
-#### `trouver($id, $colonnes = ['*'])`
-
-Trouve un enregistrement par ID.
-
-```php
-$article = Article::trouver(1);
-$article = Article::trouver(1, ['titre', 'contenu']);
-
-if (!$article) {
-    // Not found
-}
-```
-
-#### `oui($conditions)`
-
-Récupère un enregistrement correspondant aux conditions.
-
-```php
-$article = Article::oui(['titre' => 'Mon Article']);
-$article = Article::oui(['auteur' => 'Jean', 'statut' => 'publie']);
-
-if ($article) {
-    // Found
-}
-```
-
-#### `ou($conditions)`
-
-Récupère des enregistrements avec conditions OR.
-
-```php
-$articles = Article::ou(['statut' => 'brouillon', 'publier' => false]);
-```
-
----
-
-### Filtrage
-
-#### `ou($colonnes, $operateur = '=', $valeur = null)`
-
-Ajoute une condition OR à la requête.
-
-```php
-$articles = Article::ou('statut', '=', 'publie')
-    ->ou('statut', '=', 'programme')
-    ->tous();
-```
-
-#### `limite($nombre)`
-
-Limite le nombre de résultats.
-
-```php
-$articles = Article::limite(10)->tous();
-```
-
-#### `decaler($nombre)`
-
-Décale les résultats (pour pagination).
-
-```php
-$articles = Article::decaler(20)->limite(10)->tous();  // Résultats 20-30
-```
-
-#### `ordonner($colonne, $direction = 'ASC')`
-
-Trie les résultats.
-
-```php
-$articles = Article::ordonner('date_creation', 'DESC')->tous();
-$articles = Article::ordonner('titre', 'ASC')->tous();
-```
-
-#### `grouper($colonnes)`
-
-Groupe les résultats.
-
-```php
-$articles = Article::grouper('auteur')->tous();
-```
-
-#### `distinct()`
-
-Récupère des valeurs distinctes.
-
-```php
-$auteurs = Article::distinct()->tous();
-```
-
----
-
-### Agrégation
-
-#### `compter()`
-
-Compte les enregistrements.
-
-```php
-$total = Article::compter();
-$publies = Article::oui(['statut' => 'publie'])->compter();
-```
-
-#### `somme($colonne)`
-
-Calcule la somme.
-
-```php
-$total = Vente::somme('montant');
-```
-
-#### `moyenne($colonne)`
-
-Calcule la moyenne.
-
-```php
-$avg = Note::moyenne('valeur');
-```
-
-#### `min($colonne)` / `max($colonne)`
-
-Calcule min/max.
-
-```php
-$plus_ancien = Article::min('date_creation');
-$plus_recent = Article::max('date_creation');
-```
-
----
-
-### Créer / Modifier / Supprimer
-
-#### `creer($donnees)`
+### creer(array $data): self
 
 Crée un nouvel enregistrement.
 
 ```php
 $article = Article::creer([
     'titre' => 'Mon Article',
-    'contenu' => 'Contenu...',
-    'auteur' => 'Jean'
+    'contenu' => 'Contenu...'
 ]);
-
-// $article->id contient l'ID inséré
-echo $article->id;
 ```
 
-#### `sauvegarder()`
+### trouver(int $id): self|null
 
-Sauvegarde les modifications d'un modèle.
+Récupère un enregistrement par ID.
 
 ```php
 $article = Article::trouver(1);
-$article->titre = 'Nouveau titre';
-$article->contenu = 'Nouveau contenu';
+```
+
+### tous(): array
+
+Récupère tous les enregistrements.
+
+```php
+$articles = Article::tous();
+```
+
+### premier(): self|null
+
+Récupère le premier enregistrement.
+
+```php
+$article = Article::où('statut', '=', 'publié')->premier();
+```
+
+### compter(): int
+
+Compte les enregistrements.
+
+```php
+$total = Article::compter();
+$published = Article::où('statut', '=', 'publié')->compter();
+```
+
+### où(string $column, string $operator, mixed $value): Builder
+
+Filtre les enregistrements.
+
+```php
+Article::où('auteur_id', '=', 1)->tous();
+Article::où('titre', 'LIKE', '%PHP%')->tous();
+Article::où('created_at', '>', '2026-01-01')->tous();
+```
+
+### ordonner(string $column, string $direction = 'ASC'): Builder
+
+Trie les résultats.
+
+```php
+Article::ordonner('created_at', 'DESC')->tous();
+Article::ordonner('titre')->tous(); // ASC par défaut
+```
+
+### limiter(int $limit): Builder
+
+Limite le nombre de résultats.
+
+```php
+Article::limiter(10)->tous();
+```
+
+### decaler(int $offset): Builder
+
+Saute des enregistrements.
+
+```php
+Article::limiter(10)->decaler(20)->tous(); // Page 3 (10 par page)
+```
+
+### paginer(int $perPage = 15): Pagination
+
+Pagine les résultats.
+
+```php
+$articles = Article::paginer(15);
+// $articles->items, $articles->total, $articles->pages
+```
+
+### chargerEager(...$relations): Builder
+
+Charge les relations (évite N+1).
+
+```php
+$articles = Article::chargerEager('commentaires', 'auteur')->tous();
+foreach ($articles as $article) {
+    $article->commentaires; // Déjà chargés
+}
+```
+
+## Méthodes d'Instance
+
+### sauvegarder(): bool
+
+Sauvegarde les modifications.
+
+```php
+$article = Article::trouver(1);
+$article->titre = 'Nouveau Titre';
 $article->sauvegarder();
 ```
 
-#### `mettrAJour($donnees)`
+### supprimer(): bool
 
-Met à jour les enregistrements.
-
-```php
-// Mise à jour d'un enregistrement
-$article = Article::trouver(1);
-$article->mettrAJour(['titre' => 'Nouveau titre', 'statut' => 'publie']);
-
-// Mise à jour en masse
-Article::oui(['auteur' => 'Jean'])->mettrAJour(['statut' => 'archive']);
-```
-
-#### `supprimer()`
-
-Supprime un enregistrement.
+Supprime l'enregistrement.
 
 ```php
 $article = Article::trouver(1);
 $article->supprimer();
 ```
 
-#### `supprimerOu($conditions)`
+### update(array $data): bool
 
-Supprime les enregistrements correspondant aux conditions.
+Met à jour directement.
 
 ```php
-Article::supprimerOu(['statut' => 'brouillon']);
-Article::supprimerOu(['date_creation', '<', '2020-01-01']);
+$article->update(['titre' => 'Nouveau', 'statut' => 'publié']);
 ```
 
----
+## Relations
 
-### Conversions
+### hasMany(string $class, string $foreignKey): Relation
 
-#### `enTable()`
-
-Convertit le modèle en array associatif.
+Relation 1:N.
 
 ```php
-$article = Article::trouver(1);
-$data = $article->enTable();
-
-// [
-//   'id' => 1,
-//   'titre' => 'Mon Article',
-//   'contenu' => '...',
-//   'auteur' => 'Jean'
-// ]
-```
-
-#### `enJson()`
-
-Convertit le modèle en JSON.
-
-```php
-$article = Article::trouver(1);
-echo $article->enJson();
-
-// {"id":1,"titre":"Mon Article",...}
-```
-
-#### `toArray()`
-
-Alias de `enTable()` (compatible Laravel).
-
-```php
-$data = $article->toArray();
-```
-
----
-
-### Relations
-
-#### `appartientA($modele, $cle_etrangere = null)`
-
-Définie une relation "belongs to".
-
-```php
-class Commentaire extends Modele
-{
-    public function article()
-    {
-        return $this->appartientA('Article', 'article_id');
-    }
+public function commentaires() {
+    return $this->hasMany('Commentaire', 'article_id');
 }
 
-$commentaire = Commentaire::trouver(1);
-$article = $commentaire->article();
+$article->commentaires()->tous();
 ```
 
-#### `aPlusieurs($modele, $cle_etrangere = null)`
+### belongsTo(string $class, string $foreignKey): Relation
 
-Définie une relation "has many".
+Relation N:1.
 
 ```php
-class Article extends Modele
-{
-    public function commentaires()
-    {
-        return $this->aPlusieurs('Commentaire', 'article_id');
-    }
+public function article() {
+    return $this->belongsTo('Article', 'article_id');
 }
 
-$article = Article::trouver(1);
-$commentaires = $article->commentaires();
+$comment->article();
+```
+
+### hasMany... avec Condition
+
+```php
+$article->commentaires()->où('statut', '=', 'approuvé')->tous();
 ```
 
 ---
 
-## 📚 Exemples d'Utilisation
+## Exemples
 
-### CRUD Basique
+### CRUD Complet
 
 ```php
 // CREATE
 $article = Article::creer([
-    'titre' => 'Mon Article',
-    'contenu' => 'Contenu de l\'article',
-    'auteur' => 'Jean'
+    'titre' => 'Test',
+    'contenu' => 'Contenu'
 ]);
 
 // READ
 $article = Article::trouver($article->id);
-echo $article->titre;
 
 // UPDATE
-$article->titre = 'Titre modifié';
+$article->titre = 'Modifié';
 $article->sauvegarder();
 
 // DELETE
 $article->supprimer();
 ```
 
-### Requêtes Complexes
+### Query Builder
 
 ```php
-// Articles publiés, triés par date, limité à 10
-$articles = Article::oui(['statut' => 'publie'])
-    ->ordonner('date_creation', 'DESC')
-    ->limite(10)
-    ->tous();
+// Articles publiés, triés par date, paginés
+$articles = Article::où('statut', '=', 'publié')
+    ->ordonner('created_at', 'DESC')
+    ->paginer(10);
 
-// Pagination
-$page = 1;
-$parPage = 10;
-$articles = Article::decaler(($page - 1) * $parPage)
-    ->limite($parPage)
-    ->tous();
-
-// Agrégation
-$total = Article::compter();
-$parAuteur = Article::grouper('auteur')->tous();
-```
-
-### Bulk Operations
-
-```php
-// Mettre à jour plusieurs enregistrements
-Article::oui(['auteur' => 'Jean'])
-    ->mettrAJour(['statut' => 'archive', 'date_archive' => date('Y-m-d')]);
-
-// Supprimer plusieurs enregistrements
-Article::supprimerOu(['date_creation', '<', '2020-01-01']);
-```
-
-### Relations
-
-```php
-// Récupérer les commentaires d'un article
-$article = Article::trouver(1);
-$commentaires = $article->commentaires();
-
-foreach ($commentaires as $commentaire) {
-    echo $commentaire->contenu;
+foreach ($articles->items as $article) {
+    echo $article->titre;
 }
 
-// Créer un commentaire lié
-$commentaire = Commentaire::creer([
-    'article_id' => $article->id,
-    'auteur' => 'Lecteur',
-    'contenu' => 'Excellent article!'
-]);
-
-// Récupérer l'article d'un commentaire
-$article = $commentaire->article();
+echo "Page " . $articles->pageActuelle . " / " . $articles->pages;
 ```
 
 ---
 
-## 📋 Propriétés
-
-```php
-// Propriété de table
-protected static $table = 'articles';
-
-// Clé primaire
-protected static $cle_primaire = 'id';
-
-// Colonnes remplissables
-protected $fillable = ['titre', 'contenu', 'auteur'];
-
-// Colonnes cachées
-protected $hidden = ['password', 'token'];
-```
-
----
-
-## 🔗 Configuration du Modèle
-
-```php
-<?php
-
-namespace App\Modeles;
-
-use BMVC\Core\Modele;
-
-class Article extends Modele
-{
-    // Nom de la table
-    protected static $table = 'articles';
-
-    // Colonne de clé primaire
-    protected static $cle_primaire = 'id';
-
-    // Colonnes remplissables
-    protected $fillable = [
-        'titre',
-        'contenu',
-        'auteur',
-        'date_creation',
-        'statut'
-    ];
-
-    // Colonnes à cacher (ex: lors de enTable())
-    protected $hidden = [];
-
-    // Relations
-    public function commentaires()
-    {
-        return $this->aPlusieurs('Commentaire', 'article_id');
-    }
-}
-```
-
----
-
-## 📋 Cheat Sheet
-
-```php
-// Récupérer des données
-Article::tous();                    // Tous
-Article::trouver($id);              // Par ID
-Article::oui(['col' => 'val']);     // Avec conditions
-
-// Filtrer
-->limite(10);                       // Limiter
-->decaler(20);                      // Pagination
-->ordonner('col', 'DESC');          // Tri
-
-// Compter/Agréger
-->compter();                        // Nombre total
-->somme('col');                     // Somme
-->moyenne('col');                   // Moyenne
-
-// Modifier
-Article::creer($data);              // Créer
-$model->sauvegarder();              // Sauvegarder
-$model->supprimer();                // Supprimer
-
-// Convertir
-$model->enTable();                  // Array
-$model->enJson();                   // JSON
-```
-
----
-
-## 🧪 Tests
-
-Voir `tests/ModeleTest.php` pour les tests complets.
-
-```bash
-php vendor/bin/phpunit tests/ModeleTest.php
-```
-
----
-
-## 📖 Voir aussi
-
-- [Validation](Validation.md) - Valider les données avant de les sauvegarder
-- [Guide Utilisation](../guides/usage/GUIDE_UTILISATION.md) - Exemples complets
-
----
-
-**BMVC Framework v1.0.0** | [Retour à l'index](../INDEX.md)
+[← Retour à INDEX](INDEX.md)

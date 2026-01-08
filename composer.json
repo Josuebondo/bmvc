@@ -41,6 +41,37 @@
     ],
     "post-create-project-cmd": [
       "Bmvc\\InstallerScript::afficherLogo"
+    ],
+    "test": [
+      "echo Lancement de tous les tests du framework BMVC...",
+      "@test:all"
+    ],
+    "test:all": [
+      "@test:unit",
+      "@test:functional"
+    ],
+    "test:unit": [
+      "echo.",
+      "echo [1/2] Tests Unitaires",
+      "phpunit --testsuite=Unit --colors=always"
+    ],
+    "test:functional": [
+      "echo.",
+      "echo [2/2] Tests Fonctionnels",
+      "phpunit --testsuite=Functional --colors=always",
+      "php scripts/test-output.php success"
+    ],
+    "test:coverage": [
+      "echo Génération du rapport de couverture...",
+      "phpunit --coverage-html=storage/coverage --coverage-text",
+      "echo.",
+      "echo Rapport généré: storage/coverage/index.html"
+    ],
+    "lint": [
+      "php -l app/ core/ src/"
+    ],
+    "check": [
+      "@lint"
     ]
   },
   "minimum-stability": "stable",
@@ -69,5 +100,8 @@
       "1.0.1": "2025-12-28",
       "1.0.0": "2025-12-26"
     }
+  },
+  "require-dev": {
+    "phpunit/phpunit": "9.5"
   }
 }

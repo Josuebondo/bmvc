@@ -1,351 +1,157 @@
-# 📬 Classe Requete
+# Core\Requete - API Reference
 
-**Gestion des requêtes HTTP**
+Classe pour accéder aux données de la requête HTTP.
 
----
+## Méthodes
 
-## 📖 Description
+### input(string $key, mixed $default = null): mixed
 
-La classe `Requete` encapsule les données de la requête HTTP (GET, POST, headers, etc.) et fournit une interface simple pour y accéder.
-
-**Localisation:** `core/Requete.php`
-
----
-
-## 🔧 Méthodes Principales
-
-### Construction
+Récupère la valeur d'un champ de formulaire ou query parameter.
 
 ```php
-public function __construct()
+$email = $request->input('email');
+$page = $request->input('page', 1); // Avec défaut
 ```
 
-Crée une nouvelle instance de Requete en analysant automatiquement la requête HTTP actuelle.
+**Paramètres:**
 
----
+- `$key` - Nom du champ
+- `$default` - Valeur par défaut
 
-### Récupération des Données
+### tous(): array
 
-#### `get($cle = null, $defaut = null)`
-
-Récupère les paramètres GET.
+Retourne tous les inputs (POST + GET).
 
 ```php
-// Tous les paramètres GET
-$get = $requete->get();
-
-// Un paramètre spécifique
-$id = $requete->get('id');
-
-// Avec valeur par défaut
-$page = $requete->get('page', 1);
+$data = $request->tous();
+// ['email' => 'john@example.com', 'name' => 'John']
 ```
 
-#### `post($cle = null, $defaut = null)`
+### query(string $key, mixed $default = null): mixed
 
-Récupère les paramètres POST.
+Récupère une valeur de query string (?key=value).
 
 ```php
-// Tous les paramètres POST
-$post = $requete->post();
-
-// Un paramètre spécifique
-$nom = $requete->post('nom');
-
-// Avec valeur par défaut
-$email = $requete->post('email', '');
+$page = $request->query('page', 1);
+$search = $request->query('q');
 ```
 
-#### `input($cle = null, $defaut = null)`
+### param(string $key): mixed
 
-Récupère les données GET + POST combinées.
+Récupère un paramètre d'URL ({id}, {slug}).
 
 ```php
-// Paramètre qui peut venir de GET ou POST
-$recherche = $requete->input('q');
+// URL: /articles/5
+$id = $request->param('id'); // 5
 ```
 
-#### `fichier($cle)`
+### method(): string
+
+Récupère la méthode HTTP.
+
+```php
+$method = $request->method(); // GET, POST, PUT, DELETE
+```
+
+### header(string $key, mixed $default = null): mixed
+
+Récupère un header HTTP.
+
+```php
+$accept = $request->header('Accept');
+$auth = $request->header('Authorization');
+```
+
+### file(string $key): array|null
 
 Récupère un fichier uploadé.
 
 ```php
-$avatar = $requete->fichier('avatar');
+$file = $request->file('image');
+// ['name' => 'photo.jpg', 'tmp_name' => '/tmp/...', 'size' => 1024]
+```
 
-// Vérifie si le fichier existe
-if ($requete->fichier('avatar')) {
-    $chemin = $requete->fichier('avatar')['tmp_name'];
-    $nom = $requete->fichier('avatar')['name'];
+### is(string $method): bool
+
+Vérifie la méthode HTTP.
+
+```php
+if ($request->is('POST')) {
+    // Formulaire soumis
+}
+```
+
+### isJson(): bool
+
+Vérifie si la requête demande du JSON.
+
+```php
+if ($request->isJson()) {
+    return $this->json(['status' => 'ok']);
 }
 ```
 
 ---
 
-### Informations de la Requête
+## Exemples Complets
 
-#### `methode()`
-
-Retourne la méthode HTTP (GET, POST, PUT, DELETE, etc.).
+### Récupérer les Données d'un Formulaire
 
 ```php
-if ($requete->methode() === 'POST') {
-    // Traiter un POST
-}
-```
-
-#### `url()`
-
-Retourne l'URL complète de la requête.
-
-```php
-$url = $requete->url();
-// https://exemple.com/blog/articles?page=2
-```
-
-#### `cheminUri()`
-
-Retourne le chemin URI (sans domaine et paramètres).
-
-```php
-$chemin = $requete->cheminUri();
-// /blog/articles
-```
-
-#### `nomDomaine()`
-
-Retourne le nom de domaine.
-
-```php
-$domaine = $requete->nomDomaine();
-// exemple.com
-```
-
----
-
-### Headers HTTP
-
-#### `entete($cle = null)`
-
-Récupère les headers HTTP.
-
-```php
-// Tous les headers
-$headers = $requete->entete();
-
-// Un header spécifique
-$type = $requete->entete('Content-Type');
-
-// Défaut: 'application/json'
-$type = $requete->entete('Accept', 'application/json');
-```
-
----
-
-### Validation
-
-#### `valider($regles)`
-
-Valide les données de la requête.
-
-```php
-$erreurs = $requete->valider([
-    'email' => 'requis|email',
-    'nom' => 'requis|min:3',
-    'age' => 'nombre|min:18'
-]);
-
-if (!empty($erreurs)) {
-    // Afficher les erreurs
-    var_dump($erreurs);
-}
-```
-
----
-
-### Session
-
-#### `session()`
-
-Retourne l'instance de Session.
-
-```php
-$session = $requete->session();
-$user = $session->obtenir('user');
-```
-
-#### `estConnecte()`
-
-Vérifie si l'utilisateur est connecté.
-
-```php
-if ($requete->estConnecte()) {
-    // L'utilisateur est connecté
-}
-```
-
----
-
-## 📚 Exemples d'Utilisation
-
-### Récupérer des Données de Formulaire
-
-```php
-// Dans un contrôleur
-public function creerArticle(Requete $requete)
+public function store(Requete $request): string
 {
-    $titre = $requete->post('titre');
-    $contenu = $requete->post('contenu');
-    $auteur = $requete->post('auteur', 'Anonyme');
+    $email = $request->input('email');
+    $name = $request->input('name');
+    $newsletter = $request->input('newsletter', false);
 
-    // Validation
-    $erreurs = $requete->valider([
-        'titre' => 'requis|min:5|max:200',
-        'contenu' => 'requis|min:10',
+    $user = User::create([
+        'email' => $email,
+        'name' => $name,
+        'newsletter' => (bool) $newsletter
     ]);
 
-    if (!empty($erreurs)) {
-        return ['erreurs' => $erreurs];
-    }
-
-    // Créer l'article
-    $article = new Article();
-    $article->titre = $titre;
-    $article->contenu = $contenu;
-    $article->auteur = $auteur;
-    $article->sauvegarder();
-
-    return ['succes' => 'Article créé'];
+    return $this->json(['id' => $user->id], 201);
 }
 ```
 
-### Gérer un Upload de Fichier
+### Gérer les Fichiers
 
 ```php
-public function telecharger(Requete $requete)
+public function upload(Requete $request): string
 {
-    if ($requete->methode() === 'POST') {
-        $fichier = $requete->fichier('document');
+    $file = $request->file('image');
 
-        if ($fichier) {
-            $nom = time() . '_' . $fichier['name'];
-            $destination = 'storage/uploads/' . $nom;
-
-            if (move_uploaded_file($fichier['tmp_name'], $destination)) {
-                return ['succes' => 'Fichier téléchargé'];
-            }
-        }
+    if (!$file) {
+        return $this->json(['error' => 'No file'], 400);
     }
 
-    return [];
+    $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+    $newName = time() . '.' . $ext;
+
+    move_uploaded_file($file['tmp_name'], 'public/uploads/' . $newName);
+
+    return $this->json(['url' => '/uploads/' . $newName]);
 }
 ```
 
-### API REST
+### Pagination
 
 ```php
-public function obtenir(Requete $requete)
+public function index(Requete $request): string
 {
-    $id = $requete->get('id');
+    $page = $request->query('page', 1);
+    $perPage = $request->query('per_page', 10);
 
-    $article = Article::trouver($id);
+    $items = Item::paginer($perPage);
 
-    if (!$article) {
-        return response()->json(['erreur' => 'Non trouvé'], 404);
-    }
-
-    return response()->json($article->enTable());
-}
-
-public function creer(Requete $requete)
-{
-    $donnees = json_decode(file_get_contents('php://input'), true);
-
-    $erreurs = Validation::valider($donnees, [
-        'titre' => 'requis',
-        'contenu' => 'requis',
+    return $this->afficher('items.index', [
+        'items' => $items->items,
+        'total' => $items->total,
+        'page' => $page
     ]);
-
-    if (!empty($erreurs)) {
-        return response()->json(['erreurs' => $erreurs], 422);
-    }
-
-    $article = Article::creer($donnees);
-    return response()->json($article->enTable(), 201);
 }
 ```
 
 ---
 
-## 🔗 Propriétés Publiques
-
-```php
-// Paramètres GET
-$requete->_get['id'] // = 123
-
-// Paramètres POST
-$requete->_post['nom'] // = "Jean"
-
-// Fichiers uploadés
-$requete->_fichier['avatar'] // = [...]
-
-// Headers HTTP
-$requete->_entete['Content-Type'] // = "application/json"
-
-// Méthode HTTP
-$requete->_methode // = "POST"
-
-// URI de la requête
-$requete->_uri // = "/blog/articles"
-```
-
----
-
-## 📋 Cheat Sheet
-
-```php
-// Accéder aux données
-$requete->get('id');           // Paramètre GET
-$requete->post('nom');         // Paramètre POST
-$requete->input('recherche');  // GET ou POST
-$requete->fichier('avatar');   // Fichier uploadé
-
-// Informations
-$requete->methode();           // GET, POST, PUT, DELETE...
-$requete->url();               // URL complète
-$requete->cheminUri();         // /chemin/vers/page
-$requete->nomDomaine();        // exemple.com
-
-// Headers
-$requete->entete('Accept');    // Récupérer un header
-$requete->entete();            // Tous les headers
-
-// Validation
-$requete->valider($regles);    // Valider les données
-
-// Session
-$requete->session();           // Accéder à la session
-$requete->estConnecte();       // Utilisateur connecté?
-```
-
----
-
-## 🧪 Tests
-
-Voir `tests/RequeteTest.php` pour les tests complets.
-
-```bash
-php vendor/bin/phpunit tests/RequeteTest.php
-```
-
----
-
-## 📖 Voir aussi
-
-- [Reponse](Reponse.md) - Gestion des réponses HTTP
-- [Validation](Validation.md) - Validation des données
-- [Session](Session.md) - Gestion de la session utilisateur
-- [Middleware](Middleware.md) - Filtrage des requêtes
-
----
-
-**BMVC Framework v1.0.0** | [Retour à l'index](../INDEX.md)
+[← Retour à INDEX](INDEX.md)

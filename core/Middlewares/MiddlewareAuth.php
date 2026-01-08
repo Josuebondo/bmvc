@@ -16,9 +16,17 @@ class MiddlewareAuth
     public static function verifier(Requete $requete): bool
     {
         if (!Auth::connecte()) {
+
+            if ($requete->estAjax() || $requete->estApi()) {
+                http_response_code(401);
+                echo json_encode(['error' => 'Non authentifié']);
+                exit;
+            }
+
             header('Location: /connexion');
             exit;
         }
+
         return true;
     }
 }

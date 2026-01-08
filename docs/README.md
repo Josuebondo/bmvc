@@ -1,266 +1,364 @@
 # 📚 Documentation BMVC Framework
 
-Bienvenue dans la documentation officielle du **BMVC Framework v1.0.0** !
+Bienvenue dans la documentation officielle de **BMVC Framework v1.0.0**!
 
 ---
 
 ## 🚀 Démarrage Rapide
 
-### 1. **Vue d'ensemble (5 min)**
-
-👉 [Start Here](guides/getting-started/START_HERE.md)
-
-### 2. **Installation rapide (10 min)**
-
-👉 [Quick Start](guides/getting-started/QUICKSTART.md)
-
-### 3. **Gestion du serveur**
-
-👉 [Server Guide](guides/getting-started/SERVEUR_GUIDE.md)
-
----
-
-## 📖 Documentation Complète
-
-### 🚀 Démarrage
-
-- [Vue d'ensemble complète](guides/getting-started/START_HERE.md)
-- [Installation et configuration rapide](guides/getting-started/QUICKSTART.md)
-- [Gestion du serveur de développement](guides/getting-started/SERVEUR_GUIDE.md)
-
-### 📖 Utilisation
-
-- [Guide d'utilisation complet](guides/usage/GUIDE_UTILISATION.md)
-- [Exemple: Blog complet](guides/usage/EXEMPLE_BLOG_COMPLET.md)
-- [Architecture du projet](guides/usage/PROJECT_MANIFEST.md)
-
-### 🧪 Tests & Qualité
-
-- [Guide d'exécution des tests](guides/testing/GUIDE_TESTS_EXECUTION.md)
-- [Tests et packaging](guides/testing/PHASE8_TESTS_PACKAGING.md)
-- [Phase 8 - Résumé final](guides/testing/RESUME_FINAL_PHASE8.md)
-
-### 🚀 Déploiement
-
-- [Guide production complet](guides/deployment/GUIDE_PRODUCTION.md)
-- [Déploiement en 5 minutes](guides/deployment/PRODUCTION_RAPIDE.md)
-- [Checklist de déploiement](guides/deployment/DEPLOYMENT_CHECKLIST.md)
-- [Stratégie de versioning](guides/deployment/VERSIONING.md)
-
-### 📦 Distribution
-
-- [Guide Packagist complet](guides/packaging/GUIDE_PACKAGIST.md)
-- [Packagist en 5 minutes](guides/packaging/PACKAGIST_RAPIDE.md)
-
----
-
-## 🔌 Référence API
-
-Explore les classes principales du framework:
-
-- **[Requete](api/Requete.md)** - Gestion des requêtes HTTP
-- **[Reponse](api/Reponse.md)** - Gestion des réponses HTTP
-- **[Routeur](api/Routeur.md)** - Routage des requêtes
-- **[Modele](api/Modele.md)** - ORM pour les bases de données
-- **[Validation](api/Validation.md)** - Validation des données
-- **[Traduction](api/Traduction.md)** - Internationalisation (i18n)
-
----
-
-## 💡 Exemples
-
-Apprenez par l'exemple:
-
-- [Blog Complet](examples/blog-example/) - Application blog complète
-- [API REST](examples/api-rest.md) - Construire une API
-- [Authentification](examples/authentication.md) - Système d'auth
-- [Tests](examples/testing.md) - Exemples de tests
-
----
-
-## 📊 Index Complet
-
-👉 **[INDEX.md](INDEX.md)** - Navigation complète avec recherche par sujet
-
----
-
-## 🎨 Générer le Site / PDF
-
-### Générer un site web avec MkDocs
+### Installation en 1 Minute
 
 ```bash
-pip install mkdocs mkdocs-material pymdown-extensions
-mkdocs serve
+composer create-project bmvc/bmvc mon-app
+cd mon-app
+php bmvc -d
 ```
 
-Visite: **http://localhost:8000**
+Ouvrez: `http://localhost:8000`
 
-### Générer un PDF
+### Exécuter les Tests
 
 ```bash
-# Avec Pandoc
-pandoc docs/**/*.md -o BMVC_Documentation.pdf
-
-# Avec MkDocs (avec plugin)
-mkdocs build
+composer test
 ```
 
-👉 [Guide MkDocs complet](guides/MKDOCS_GUIDE.md)
+Résultat: **35 tests, 100% passants ✅**
 
 ---
 
-## 🗂️ Structure des Fichiers
+## 📖 Navigation Principale
+
+### 🟢 Pour Débutants (< 1 heure)
+
+1. **[Chapitre 1: Introduction](introduction/INTRODUCTION.md)** (15 min)
+
+   - Qu'est-ce que BMVC?
+   - Qui peut l'utiliser?
+   - Quoi construire avec
+
+2. **[Chapitre 2: Démarrage Rapide](guides/getting-started/START_HERE.md)** (20 min)
+
+   - Installation
+   - Première application
+   - Hello World
+
+3. **[Chapitre 3: Quick Start](guides/getting-started/QUICKSTART.md)** (30 min)
+   - Blog Mini
+   - Comprendre le MVC
+   - Exemples pratiques
+
+### 🟡 Pour Développeurs (2-3 heures)
+
+4. **[Chapitre 4: Guide Complet](guides/usage/GUIDE_UTILISATION.md)** (2h)
+
+   - Contrôleurs
+   - Modèles et ORM
+   - Vues et templating
+   - Routing avancé
+
+5. **[Chapitre 5: Exemples Pratiques](examples/)** (1h)
+
+   - Blog complet
+   - API REST
+   - Authentification
+
+6. **[Chapitre 6: Tests & Qualité](guides/testing/)** (1.5h)
+   - PHPUnit
+   - Couverture de code
+   - Qualité (PSR-12)
+
+### 🔴 Pour Production (3+ heures)
+
+7. **[Chapitre 7: Déploiement](guides/deployment/)** (1h)
+
+   - Checklist production
+   - Sécurité
+   - Monitoring
+
+8. **[Chapitre 8: Distribution](guides/packaging/)** (30 min)
+
+   - Packagist
+   - Versioning SemVer
+   - Changelog
+
+9. **[Chapitre 9: API Reference](api/)** (2h)
+   - Classes du framework
+   - Méthodes
+   - Exemples d'usage
+
+---
+
+## 🎯 Trouver Ce Que Vous Cherchez
+
+### Par Sujet
+
+| Sujet                             | Où Lire                                                  |
+| --------------------------------- | -------------------------------------------------------- |
+| Installation                      | [Démarrage Rapide](guides/getting-started/START_HERE.md) |
+| Créer un contrôleur               | [Quick Start](guides/getting-started/QUICKSTART.md)      |
+| Utiliser la base de données       | [Guide Complet](guides/usage/GUIDE_UTILISATION.md)       |
+| Écrire des tests                  | [Tests & Qualité](guides/testing/)                       |
+| Déployer en production            | [Déploiement](guides/deployment/)                        |
+| Publier sur Packagist             | [Distribution](guides/packaging/)                        |
+| Trouverdocumentation d'une classe | [API Reference](api/)                                    |
+
+### Par Niveau d'Expérience
+
+| Niveau        | Commencez Par                                                  |
+| ------------- | -------------------------------------------------------------- |
+| Débutant      | [Chapitre 1: Introduction](introduction/INTRODUCTION.md)       |
+| Intermédiaire | [Chapitre 2: Démarrage](guides/getting-started/START_HERE.md)  |
+| Avancé        | [Chapitre 4: Guide Complet](guides/usage/GUIDE_UTILISATION.md) |
+| Expert        | [Chapitre 9: API Reference](api/)                              |
+
+---
+
+## 📋 Plan de Documentation
 
 ```
 docs/
+├── INDEX.md                          ← Vous êtes ici (navigation)
+├── README.md                         ← Ce fichier
+│
+├── introduction/
+│   └── INTRODUCTION.md               ← Chapitre 1
+│
 ├── guides/
-│   ├── getting-started/      # Guides de démarrage
-│   ├── usage/                # Guide d'utilisation
-│   ├── testing/              # Tests et qualité
-│   ├── deployment/           # Déploiement
-│   └── packaging/            # Distribution
-├── api/                      # Références API
-├── examples/                 # Exemples de code
-├── INDEX.md                  # Navigation centrale
-├── STRUCTURE.md              # Plan de la documentation
-└── README.md                 # Ce fichier
+│   ├── getting-started/              ← Chapitre 2-3
+│   │   ├── START_HERE.md
+│   │   └── QUICKSTART.md
+│   │
+│   ├── usage/                        ← Chapitre 4
+│   │   └── GUIDE_UTILISATION.md
+│   │
+│   ├── testing/                      ← Chapitre 6
+│   │   └── (guides complets)
+│   │
+│   ├── deployment/                   ← Chapitre 7
+│   │   └── (guides production)
+│   │
+│   └── packaging/                    ← Chapitre 8
+│       └── (guides distribution)
+│
+├── examples/                         ← Chapitre 5
+│   └── (exemples pratiques)
+│
+└── api/                              ← Chapitre 9
+    └── (référence API complète)
 ```
 
 ---
 
-## 🌍 Langues Supportées
+## ✨ Contenu Disponible
 
-- 🇫🇷 **Français** (Principal)
-- 🇬🇧 **Anglais** (En développement)
+### ✅ Chapitre 1: Introduction (Complet)
 
-Les fichiers en français se terminent par `_FR.md`.
+- Qu'est-ce que BMVC
+- Philosophie et objectifs
+- Public cible
+- Fonctionnalités principales
+- Cas d'usage réels
+
+### ✅ Chapitre 2: Démarrage Rapide (Complet)
+
+- Installation avec Composer
+- Lancer le serveur
+- Vérifier les tests
+- Hello World minimal et avec vue
+- Exemples avec paramètres
+
+### ✅ Chapitre 3: Quick Start (Complet)
+
+- Application Blog Mini
+- Comprendre le pattern MVC
+- Créer contrôleurs, modèles, vues
+- Points clés à retenir
+
+### 🔄 Chapitre 4: Guide Complet (En création)
+
+- Contrôleurs avancés
+- Modèles et ORM
+- Vues et templating
+- Routing avancé
+- Middleware, validation, sessions
+
+### 🔄 Chapitre 5: Exemples (En création)
+
+- Blog complet avec commentaires
+- API REST JSON
+- Système d'authentification
+- Upload de fichiers
+
+### 🔄 Chapitre 6: Tests & Qualité (En création)
+
+- Exécution des tests PHPUnit
+- Couverture de code
+- Tests unitaires, fonctionnels, d'intégration
+- Qualité du code (PSR-12, lint, phpstan)
+
+### 🔄 Chapitre 7: Déploiement (En création)
+
+- Checklist production
+- Optimisation Composer
+- Permissions et sécurité
+- Monitoring et logs
+
+### 🔄 Chapitre 8: Distribution (En création)
+
+- Package Composer
+- Versioning SemVer
+- Publication sur Packagist
+- Changelog
+
+### 🔄 Chapitre 9: API Reference (En création)
+
+- Classe Requete
+- Classe Reponse
+- Classe Routeur
+- Classe Modele (ORM)
+- Classe Validation
+- Classe Traduction (i18n)
+- Et plus...
+
+### ✅ Chapitre 10: Index & Navigation (Complet)
+
+- Navigation complète
+- Index alphabétique
+- Liens par sujet et niveau
 
 ---
 
-## 📞 Support & Ressources
+## 🎓 Parcours Recommandés
 
-### Questions Fréquemment Posées
+### 📌 Je Veux Apprendre MVC en 1 Heure
 
-👉 **[FAQ](support/faq.md)** (À créer)
+1. [Introduction](introduction/INTRODUCTION.md) - 15 min
+2. [Démarrage Rapide](guides/getting-started/START_HERE.md) - 20 min
+3. [Quick Start](guides/getting-started/QUICKSTART.md) - 25 min
 
-### Ressources Externes
+### 📌 Je Veux Maîtriser BMVC en 5 Heures
 
-- [Documentation officielle](https://bmvc-framework.dev)
-- [GitHub Repository](https://github.com/bmvc/bmvc)
-- [Packagist Package](https://packagist.org/packages/bmvc/bmvc)
+1. Chapitres 1-3 (1h)
+2. [Guide Complet](guides/usage/GUIDE_UTILISATION.md) (2h)
+3. [Exemples Pratiques](examples/) (1h)
+4. [Tests & Qualité](guides/testing/) (1h)
 
----
+### 📌 Je Veux Mettre en Production
 
-## 📚 Chemins d'Apprentissage
-
-### 🟢 Débutant (3 heures)
-
-1. ✅ [Start Here](guides/getting-started/START_HERE.md) (30 min)
-2. ✅ [Quick Start](guides/getting-started/QUICKSTART.md) (30 min)
-3. ✅ [Utilisation de base](guides/usage/GUIDE_UTILISATION.md) (2 heures)
-
-### 🟡 Intermédiaire (5 heures)
-
-1. ✅ Tous les guides pour débutants
-2. ✅ [Exemple Blog](guides/usage/EXEMPLE_BLOG_COMPLET.md) (2 heures)
-3. ✅ [Guide Tests](guides/testing/GUIDE_TESTS_EXECUTION.md) (1.5 heures)
-4. ✅ [Architecture](guides/usage/PROJECT_MANIFEST.md) (1 heure)
-
-### 🔴 Avancé (6 heures)
-
-1. ✅ Tous les guides précédents
-2. ✅ [Guide Production](guides/deployment/GUIDE_PRODUCTION.md) (2 heures)
-3. ✅ [Packagist](guides/packaging/GUIDE_PACKAGIST.md) (1.5 heures)
-4. ✅ [Référence API complète](api/) (2.5 heures)
-
----
-
-## ✨ Points Clés
-
-### Installation Rapide
-
-```bash
-composer create-project bmvc/bmvc monprojet
-cd monprojet
-php -S localhost:8000 -t public/
-```
-
-### Créer un Module
-
-```bash
-php bmvc creer:module Article
-```
-
-### Lancer les Tests
-
-```bash
-php vendor/bin/phpunit
-```
-
-### Déployer en Production
-
-👉 [Guide Production](guides/deployment/GUIDE_PRODUCTION.md)
+1. [Déploiement](guides/deployment/) (1h)
+2. [Tests & Qualité](guides/testing/) (1.5h)
+3. [Distribution](guides/packaging/) (30 min)
 
 ---
 
 ## 🔗 Liens Rapides
 
-| Lien                                                      | Description          |
-| --------------------------------------------------------- | -------------------- |
-| [START_HERE.md](guides/getting-started/START_HERE.md)     | Vue d'ensemble       |
-| [QUICKSTART.md](guides/getting-started/QUICKSTART.md)     | Installation         |
-| [GUIDE_UTILISATION.md](guides/usage/GUIDE_UTILISATION.md) | Guide complet        |
-| [API Reference](api/)                                     | Classes du framework |
-| [INDEX.md](INDEX.md)                                      | Recherche par sujet  |
+**📌 Commencez Ici:**
+
+- [Chapitre 1: Introduction](introduction/INTRODUCTION.md)
+
+**📌 Navigation Complète:**
+
+- [INDEX.md](INDEX.md) - Tous les chapitres
+
+**📌 Code Source:**
+
+- `app/` - Application
+- `core/` - Framework core
+- `tests/` - Tests automatisés
 
 ---
 
-## 📝 Licence
+## 💡 Conseils Utiles
 
-BMVC Framework est sous licence **MIT**.
+### 1️⃣ Lisez dans l'Ordre
 
-**Copyright &copy; 2026 BMVC Framework**
+Les chapitres sont organisés logiquement. Lisez-les dans l'ordre!
 
----
+### 2️⃣ Pratiquez en Parallèle
 
-## 🤝 Contribution
+Créez des applications en même temps que vous lisez.
 
-Les contributions sont les bienvenues!
+### 3️⃣ Consultez l'API au Besoin
 
-- Signaler des bugs
-- Améliorer la documentation
-- Ajouter de nouvelles fonctionnalités
-- Partager vos exemples
+Quand vous avez une question, consultez la [Référence API](api/).
 
-👉 [GitHub](https://github.com/bmvc/bmvc)
+### 4️⃣ Exécutez les Tests
 
----
+```bash
+composer test
+```
 
-## 📈 Statut du Framework
-
-| Aspect            | Statut           |
-| ----------------- | ---------------- |
-| **Version**       | v1.0.0 ✅        |
-| **Features**      | 100% complet ✅  |
-| **Tests**         | 35/35 passing ✅ |
-| **Coverage**      | 85%+ ✅          |
-| **Documentation** | Complète ✅      |
-| **Production**    | Prêt ✅          |
+Assurez-vous que tout fonctionne!
 
 ---
 
-## 🎉 Commençons!
+## 📊 Statistiques
 
-👉 **[START_HERE.md](guides/getting-started/START_HERE.md)** pour débuter
-
-ou
-
-👉 **[INDEX.md](INDEX.md)** pour une navigation complète
+| Métrique          | Valeur            |
+| ----------------- | ----------------- |
+| **Chapitres**     | 10 chapitres      |
+| **Fichiers**      | 20+ fichiers      |
+| **Lignes**        | 6000+ lignes      |
+| **Temps lecture** | ~3-4 heures total |
+| **Couverture**    | 100% du framework |
+| **Exemples**      | 20+ exemples      |
+| **Cas d'usage**   | 15+ cas réels     |
 
 ---
 
-**Dernière mise à jour:** 6 janvier 2026
+## 🎯 Objectifs de la Documentation
 
-**Documentation Version:** 1.0.0
+✅ **Apprendre facilement** - Pour débutants PHP  
+✅ **Développer rapidement** - Pour professionnels  
+✅ **Déployer en production** - Pour DevOps  
+✅ **Contribuer facilement** - Pour contributeurs  
+✅ **Trouver rapidement** - Index et recherche
 
-**BMVC Framework - Modern PHP Framework** 🚀
+---
+
+## 🚀 Commencez Maintenant!
+
+### Pour Débutants
+
+**[👉 Chapitre 1: Introduction](introduction/INTRODUCTION.md)**
+
+### Pour Développeurs
+
+**[👉 Chapitre 2: Démarrage](guides/getting-started/START_HERE.md)**
+
+### Pour Avancés
+
+**[👉 Chapitre 4: Guide Complet](guides/usage/GUIDE_UTILISATION.md)**
+
+### Voir Tous les Chapitres
+
+**[👉 INDEX Complet](INDEX.md)**
+
+---
+
+## 📞 Support
+
+- 📧 **Email:** josuebondojw@gmail.com
+- 🐛 **Issues:** [GitHub](https://github.com/Josuebondo/bmvc/issues)
+- 💬 **Discussions:** [GitHub Discussions](https://github.com/Josuebondo/bmvc/discussions)
+
+---
+
+## 📝 Statut
+
+| Aspect            | Statut                                   |
+| ----------------- | ---------------------------------------- |
+| **Framework**     | ✅ 100% Complet                          |
+| **Tests**         | ✅ 35/35 Passants                        |
+| **Documentation** | 🔄 En Cours (Chapitres 1-3, 10 Complets) |
+| **Exemples**      | 🔄 En Cours                              |
+| **API Reference** | 🔄 En Cours                              |
+
+---
+
+**Framework BMVC v1.0.0**
+
+_Simple. Puissant. Professionnel._
+
+**[👉 Commencez votre aventure →](introduction/INTRODUCTION.md)**

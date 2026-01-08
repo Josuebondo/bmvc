@@ -126,6 +126,25 @@ class Requete
     }
 
     /**
+     * Vérifie si c'est une requête API (header Authorization Bearer présent)
+     */
+    public function estApi(): bool
+    {
+        $header = $this->entete('Authorization');
+        return !empty($header) && preg_match('/Bearer\s+.+/i', $header);
+    }
+
+    /**
+     * Obtient un en-tête HTTP
+     */
+    public function entete(string $nom): ?string
+    {
+        // Convertir le nom en format HTTP (ex: authorization -> HTTP_AUTHORIZATION)
+        $cle = 'HTTP_' . strtoupper(str_replace('-', '_', $nom));
+        return $this->server[$cle] ?? null;
+    }
+
+    /**
      * Obtient une valeur GET ou POST
      */
     public function input(string $cle, mixed $default = null): mixed

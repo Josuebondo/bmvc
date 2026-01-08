@@ -1,583 +1,520 @@
-# ⚡ DÉMARRAGE RAPIDE - Framework BMVC v1.0.0
+# ⚡ Chapitre 3: Quick Start - Premières Applications
 
-**Lancez-vous avec BMVC en 5 minutes!** 🚀
-
----
-
-## 🎯 Installation (2 min)
-
-### Option 1: Composer (Recommandé)
-
-```bash
-composer require bmvc/framework
-```
-
-### Option 2: Cloner depuis GitHub
-
-```bash
-git clone https://github.com/bmvc/framework.git
-cd framework
-composer install
-```
+**Construisez votre première vraie application avec BMVC**
 
 ---
 
-## 👋 Hello World (1 min)
+## 🎯 Objectifs de ce Chapitre
 
-### 1. Créer un Contrôleur
+- Créer une application complète (Blog mini)
+- Comprendre le pattern MVC en pratique
+- Utiliser les contrôleurs, modèles et vues
+- Gérer les routes et paramètres
 
-**Fichier:** `app/Controllers/HelloController.php`
+**Temps estimé:** 20-30 minutes
+
+---
+
+## 📋 Application 1: Blog Mini
+
+### Étape 1: Créer la Structure
+
+Lancez les commandes CLI pour générer les fichiers:
+
+```bash
+php bmvc make:controller ArticleController
+php bmvc make:model Article
+php bmvc make:migration CreateArticlesTable
+```
+
+Ou les raccourcis:
+
+```bash
+php bmvc -cc ArticleController
+php bmvc -cm Article
+php bmvc -cmg CreateArticlesTable
+```
+
+### Étape 2: Définir les Routes
+
+Fichier: `routes/web.php`
 
 ```php
 <?php
-namespace App\Controllers;
 
-class HelloController {
-    public function index() {
-        return "Bonjour, BMVC!";
-    }
-}
+use Core\Routeur;
+
+// Page d'accueil
+Routeur::obtenir('/', 'PageControleur@accueil');
+
+// Articles
+Routeur::obtenir('/articles', 'ArticleControleur@index');         // Liste
+Routeur::obtenir('/articles/nouveau', 'ArticleControleur@create'); // Formulaire
+Routeur::publier('/articles', 'ArticleControleur@store');          // Enregistrer
+Routeur::obtenir('/articles/{id}', 'ArticleControleur@show');      // Détail
+Routeur::obtenir('/articles/{id}/editer', 'ArticleControleur@edit'); // Édition
+Routeur::mettre('/articles/{id}', 'ArticleControleur@update');     // Mettre à jour
+Routeur::supprimer('/articles/{id}', 'ArticleControleur@destroy'); // Supprimer
 ```
 
-### 2. Ajouter une Route
+### Étape 3: Créer le Modèle
 
-**Fichier:** `routes/web.php`
-
-```php
-$router->get('/', 'HelloController@index');
-```
-
-### 3. Lancer le Serveur
-
-```bash
-php -S localhost:8000
-```
-
-### 4. Visit
-
-```
-http://localhost:8000
-```
-
-✅ **Done!** You'll see: `Hello, BMVC!`
-
----
-
-## 🔥 Common Tasks (2 min)
-
-### Create Blog Post Model
-
-**File:** `app/Models/Post.php`
+Fichier: `app/Modeles/Article.php`
 
 ```php
 <?php
-namespace App\Models;
+
+namespace App\Modeles;
+
 use Core\Modele;
 
-class Post extends Modele {
-    protected $table = 'posts';
+class Article extends Modele
+{
+    protected string $table = 'articles';
+
+    protected array $fillable = ['titre', 'contenu', 'auteur'];
 }
 ```
 
-### Create Posts Controller
+### Étape 4: Créer le Contrôleur
 
-**File:** `app/Controllers/PostController.php`
+Fichier: `app/Controleurs/ArticleControleur.php`
 
 ```php
 <?php
-namespace App\Controllers;
-use App\Models\Post;
-use Core\APIResponse;
 
-class PostController {
-    // List all posts
-    public function index() {
-        $posts = Post::all();
-        return APIResponse::succes($posts);
-    }
+namespace App\Controleurs;
 
-    // Get single post
-    public function show($id) {
-        $post = Post::find($id);
-        return APIResponse::succes($post);
-    }
+use App\BaseControleur;
+use App\Modeles\Article;
+use Core\Requete;
+use Core\Reponse;
 
-    // Create post
-    public function store() {
-        $post = Post::create([
-            'title' => $_POST['title'],
-            'content' => $_POST['content']
+class ArticleControleur extends BaseControleur
+{
+    // Afficher la liste des articles
+    public function index(Requete $request, Reponse $response): string
+    {
+        $articles = Article::tous(); // Récupérer tous les articles
+
+        return $this->afficher('articles/index', [
+            'articles' => $articles
         ]);
-        return APIResponse::succes($post, 'Post created', 201);
+    }
+
+    // Afficher le formulaire de création
+    public function create(Requete $request, Reponse $response): string
+    {
+        return $this->afficher('articles/create');
+    }
+
+    // Enregistrer un nouvel article
+    public function store(Requete $request, Reponse $response): string
+    {
+        $donnees = $request->tous();
+
+        // Validation
+        $erreurs = $this->valider($donnees, [
+            'titre' => 'requis|min:3|max:100',
+            'contenu' => 'requis|min:10',
+            'auteur' => 'requis'
+        ]);
+
+        if (!empty($erreurs)) {
+            $this->flash('erreur', 'Erreurs de validation');
+            return $this->rediriger('/articles/nouveau');
+        }
+
+        // Créer l'article
+        Article::creer($donnees);
+
+        $this->flash('succes', 'Article créé avec succès!');
+        return $this->rediriger('/articles');
+    }
+
+    // Afficher un article détaillé
+    public function show(Requete $request, Reponse $response): string
+    {
+        $id = $request->param('id');
+        $article = Article::trouver($id);
+
+        if (!$article) {
+            return $this->erreur(404, 'Article non trouvé');
+        }
+
+        return $this->afficher('articles/show', [
+            'article' => $article
+        ]);
+    }
+
+    // Afficher le formulaire d'édition
+    public function edit(Requete $request, Reponse $response): string
+    {
+        $id = $request->param('id');
+        $article = Article::trouver($id);
+
+        if (!$article) {
+            return $this->erreur(404, 'Article non trouvé');
+        }
+
+        return $this->afficher('articles/edit', [
+            'article' => $article
+        ]);
+    }
+
+    // Mettre à jour un article
+    public function update(Requete $request, Reponse $response): string
+    {
+        $id = $request->param('id');
+        $article = Article::trouver($id);
+
+        if (!$article) {
+            return $this->erreur(404, 'Article non trouvé');
+        }
+
+        $donnees = $request->tous();
+
+        $article->mettre_a_jour($donnees);
+
+        $this->flash('succes', 'Article mis à jour!');
+        return $this->rediriger('/articles/' . $id);
+    }
+
+    // Supprimer un article
+    public function destroy(Requete $request, Reponse $response): string
+    {
+        $id = $request->param('id');
+        $article = Article::trouver($id);
+
+        if (!$article) {
+            return $this->erreur(404, 'Article non trouvé');
+        }
+
+        $article->supprimer();
+
+        $this->flash('succes', 'Article supprimé!');
+        return $this->rediriger('/articles');
     }
 }
 ```
 
-### Add Routes
+### Étape 5: Créer les Vues
 
-**File:** `routes/web.php`
+#### Vue 1: Liste des articles
 
-```php
-// GET /posts → show all
-$router->get('/posts', 'PostController@index');
+Fichier: `app/Vues/articles/index.php`
 
-// GET /posts/{id} → show one
-$router->get('/posts/{id}', 'PostController@show')
-    ->where('id', '[0-9]+');
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Articles</title>
+    <style>
+      body {
+        font-family: Arial;
+        margin: 20px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 10px;
+        text-align: left;
+      }
+      th {
+        background: #f0f0f0;
+      }
+      a {
+        color: #0066cc;
+        text-decoration: none;
+      }
+      .btn {
+        padding: 8px 15px;
+        background: #0066cc;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>📝 Articles</h1>
+    <a href="/articles/nouveau" class="btn">+ Nouveau Article</a>
 
-// POST /posts → create
-$router->post('/posts', 'PostController@store');
+    <table>
+      <thead>
+        <tr>
+          <th>Titre</th>
+          <th>Auteur</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <?php foreach ($articles as $article): ?>
+        <tr>
+          <td><?php echo e($article->titre); ?></td>
+          <td><?php echo e($article->auteur); ?></td>
+          <td>
+            <a href="/articles/<?php echo $article->id; ?>">Voir</a>
+            <a href="/articles/<?php echo $article->id; ?>/editer">Éditer</a>
+            <form
+              method="POST"
+              action="/articles/<?php echo $article->id; ?>"
+              style="display:inline;"
+            >
+              <input type="hidden" name="_method" value="DELETE" />
+              <button type="submit" onclick="return confirm('Confirmer?')">
+                Supprimer
+              </button>
+            </form>
+          </td>
+        </tr>
+        <?php endforeach; ?>
+      </tbody>
+    </table>
+  </body>
+</html>
 ```
 
-### Test
+#### Vue 2: Créer un article
 
-```bash
-# Get all posts
-curl http://localhost:8000/posts
+Fichier: `app/Vues/articles/create.php`
 
-# Get post 1
-curl http://localhost:8000/posts/1
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Nouvel Article</title>
+    <style>
+      body {
+        font-family: Arial;
+        margin: 20px;
+        max-width: 600px;
+      }
+      form {
+        background: #f9f9f9;
+        padding: 20px;
+        border-radius: 4px;
+      }
+      label {
+        display: block;
+        margin-top: 15px;
+        font-weight: bold;
+      }
+      input,
+      textarea {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+      }
+      button {
+        margin-top: 20px;
+        padding: 10px 20px;
+        background: #0066cc;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>📝 Créer un Article</h1>
 
-# Create post
-curl -X POST http://localhost:8000/posts \
-  -d "title=My Post" \
-  -d "content=Post content"
+    <form method="POST" action="/articles">
+      <label>Titre</label>
+      <input type="text" name="titre" required />
+
+      <label>Contenu</label>
+      <textarea name="contenu" rows="5" required></textarea>
+
+      <label>Auteur</label>
+      <input type="text" name="auteur" required />
+
+      <button type="submit">Créer</button>
+      <a href="/articles">← Retour</a>
+    </form>
+  </body>
+</html>
 ```
+
+#### Vue 3: Détail d'un article
+
+Fichier: `app/Vues/articles/show.php`
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><?php echo e($article->titre); ?></title>
+    <style>
+      body {
+        font-family: Arial;
+        margin: 20px;
+        max-width: 800px;
+      }
+      .container {
+        background: #f9f9f9;
+        padding: 20px;
+        border-radius: 4px;
+      }
+      a {
+        color: #0066cc;
+      }
+    </style>
+  </head>
+  <body>
+    <h1><?php echo e($article->titre); ?></h1>
+    <p>
+      <strong>Auteur:</strong>
+      <?php echo e($article->auteur); ?>
+    </p>
+
+    <div class="container">
+      <p><?php echo nl2br(e($article->contenu)); ?></p>
+    </div>
+
+    <div>
+      <a href="/articles/<?php echo $article->id; ?>/editer">Éditer</a>
+      <a href="/articles">← Retour</a>
+    </div>
+  </body>
+</html>
+```
+
+### Étape 6: Tester l'Application
+
+1. Lancez le serveur: `php bmvc -d`
+2. Allez à: `http://localhost:8000/articles`
+3. Créez un article
+4. Visionnez la liste
+5. Modifiez et supprimez
+
+✅ **Bravo!** Vous avez créé une application blog complète!
 
 ---
 
-## 🧪 Testing (1 min)
+## 🎨 Concepts Clés Expliqués
 
-### Run All Tests
-
-```bash
-composer test
-```
-
-### Expected Output
+### Pattern MVC en Pratique
 
 ```
-PHPUnit 9.5.x
-
-35 tests, 0 failures, 0 errors ✅
-Code Coverage: 85%+
+Navigateur (User)
+    ↓
+Route (routes/web.php)
+    ↓
+Controller (ArticleControleur)
+    ↓
+Model (Article)
+    ↓
+View (articles/index.php)
+    ↓
+HTML (Navigateur)
 ```
 
-### Run Specific Tests
+### Cycle Requête-Réponse
 
-```bash
-# Unit tests only
-composer test:unit
-
-# Functional tests only
-composer test:functional
-
-# With coverage report
-composer test:coverage
 ```
+1. Utilisateur clique sur un lien
+   ↓
+2. Navigateur envoie une requête HTTP
+   ↓
+3. Routeur trouve la bonne route
+   ↓
+4. Contrôleur traite la logique
+   ↓
+5. Modèle communique avec la BD
+   ↓
+6. Vue affiche le résultat
+   ↓
+7. Réponse HTML envoyée au navigateur
+```
+
+### Les 4 Opérations CRUD
+
+| Opération  | HTTP   | Route          | Méthode   | Description |
+| ---------- | ------ | -------------- | --------- | ----------- |
+| **C**reate | POST   | /articles      | store()   | Créer       |
+| **R**ead   | GET    | /articles/{id} | show()    | Lire        |
+| **U**pdate | PUT    | /articles/{id} | update()  | Modifier    |
+| **D**elete | DELETE | /articles/{id} | destroy() | Supprimer   |
 
 ---
 
-## 🛠️ Configuration
+## 📱 Application 2: Liste TODO Rapide
 
-### Setup Environment
-
-**File:** `.env`
-
-```env
-APP_NAME=BMVC
-APP_ENV=production
-APP_DEBUG=false
-
-DB_HOST=localhost
-DB_USER=root
-DB_PASSWORD=
-DB_NAME=bmvc
-
-LANGUAGE=fr
-```
-
-### Database Setup
-
-```sql
--- Create database
-CREATE DATABASE bmvc DEFAULT CHARSET utf8mb4;
-
--- Create posts table (example)
-CREATE TABLE posts (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    title VARCHAR(255) NOT NULL,
-    content TEXT NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-```
-
----
-
-## 📚 Key Concepts
-
-### Routing
-
-```php
-// GET route
-$router->get('/home', 'HomeController@index');
-
-// POST route
-$router->post('/users', 'UserController@store');
-
-// With parameters
-$router->get('/posts/{id}', 'PostController@show');
-
-// With constraints
-$router->get('/posts/{id}', 'PostController@show')
-    ->where('id', '[0-9]+');
-
-// Named route
-$router->get('/about', 'PageController@about')
-    ->name('about');
-```
-
-### Models (ORM)
-
-```php
-use App\Models\Post;
-
-// Get all
-$posts = Post::all();
-
-// Get one
-$post = Post::find(1);
-
-// Where clause
-$posts = Post::where('author', 'John')->get();
-$post = Post::where('id', 1)->first();
-
-// Create
-$post = Post::create([
-    'title' => 'My Post',
-    'content' => 'Content here'
-]);
-
-// Update
-$post->update(['title' => 'New Title']);
-
-// Delete
-$post->delete();
-```
-
-### Validation
-
-```php
-use Core\Validation;
-
-$data = [
-    'email' => 'user@example.com',
-    'password' => 'secret123'
-];
-
-$rules = [
-    'email' => 'required|email',
-    'password' => 'required|min:6'
-];
-
-Validation::validate($data, $rules);
-// Returns true if valid, throws exception if not
-```
-
-### Translations (i18n)
-
-```php
-use Core\Traduction;
-
-// Load language
-Traduction::chargerLangue('fr');
-
-// Get translation
-$message = Traduction::obtenir('messages.welcome');
-
-// With variables
-$greeting = Traduction::obtenir('messages.hello',
-    ['name' => 'John']
-);
-
-// Change language
-Traduction::chargerLangue('en');
-```
-
-### REST API
-
-```php
-use Core\APIResponse;
-
-// Success response
-return APIResponse::succes(
-    ['user' => $user],
-    'User created',
-    201
-);
-
-// Error response
-return APIResponse::erreur('Invalid email', 400);
-
-// 401 Unauthorized
-return APIResponse::nonAuthentifie('Login required');
-
-// 403 Forbidden
-return APIResponse::nonAutorise('Not allowed');
-
-// 404 Not Found
-return APIResponse::nonTrouve('User not found');
-```
-
----
-
-## 🎯 Next Steps
-
-### Learn More
-
-1. 📖 Read [GUIDE_UTILISATION.md](GUIDE_UTILISATION.md) - Complete guide (30 min)
-2. 📋 See [EXEMPLE_BLOG_COMPLET.md](EXEMPLE_BLOG_COMPLET.md) - Full app example (30 min)
-3. 🧪 Learn [GUIDE_TESTS_EXECUTION.md](GUIDE_TESTS_EXECUTION.md) - Testing guide (30 min)
-
-### Build Something
-
-1. Create a model
-2. Add routes
-3. Write tests
-4. Deploy!
-
-### Get Help
-
-1. 📚 [INDEX_DOCUMENTATION_COMPLETE.md](INDEX_DOCUMENTATION_COMPLETE.md) - Master index
-2. 🔍 Search documentation
-3. 📖 Check examples
-
----
-
-## 💡 Pro Tips
-
-### Use CLI Generator
-
-```bash
-# Generate Gallery module with routes
-php bmvc -cmd Gallery
-
-# Creates:
-# - app/Controllers/GalleryController.php
-# - app/Models/Gallery.php
-# - Routes for CRUD operations
-```
-
-### Enable Debug Mode
-
-```env
-# .env
-APP_DEBUG=true
-```
-
-### View All Routes
-
-```bash
-# View registered routes
-php bmvc -cmd routes
-
-# Output: List of all routes
-```
-
-### Generate API Response
-
-```php
-use Core\APIResponse;
-
-// Return JSON automatically
-return APIResponse::succes(['data' => $data]);
-```
-
-### Handle Errors
-
-```php
-try {
-    $user = User::find($id);
-} catch (Exception $e) {
-    return APIResponse::erreur($e->getMessage(), 500);
-}
-```
-
----
-
-## 🚀 Deploy to Production
-
-### Quick Deploy
-
-```bash
-# 1. Install without dev dependencies
-composer install --no-dev --optimize-autoloader
-
-# 2. Configure environment
-cp .env.example .env
-# Edit .env with production settings
-
-# 3. Set permissions
-chmod 755 storage/
-chmod 755 storage/cache/
-chmod 755 storage/logs/
-
-# 4. Done! Your app is ready
-```
-
-### Verify Deployment
-
-```bash
-# Run tests
-composer test
-
-# Should show: 35 tests, 0 failures ✅
-```
-
----
-
-## 📋 Cheat Sheet
+Créons une application TODO minimaliste.
 
 ### Routes
 
 ```php
-$router->get($path, $controller@$method);
-$router->post($path, $controller@$method);
-$router->put($path, $controller@$method);
-$router->delete($path, $controller@$method);
+Routeur::obtenir('/todos', 'TodoControleur@index');
+Routeur::publier('/todos', 'TodoControleur@store');
+Routeur::supprimer('/todos/{id}', 'TodoControleur@destroy');
 ```
 
-### Database
+### Contrôleur (Simplifié)
 
 ```php
-Model::all();
-Model::find($id);
-Model::where($column, $value)->get();
-Model::create($data);
-Model::update($data);
-Model::delete();
-```
+class TodoControleur extends BaseControleur
+{
+    public function index(Requete $request, Reponse $response): string
+    {
+        $todos = Todo::tous();
+        return $this->afficher('todos/index', ['todos' => $todos]);
+    }
 
-### Validation
+    public function store(Requete $request, Reponse $response): string
+    {
+        Todo::creer(['titre' => $request->input('titre')]);
+        return $this->rediriger('/todos');
+    }
 
-```php
-'email' => 'required|email'
-'name' => 'required|min:3|max:100'
-'age' => 'required|numeric|min:18'
-'password' => 'required|min:6|confirmed'
-```
-
-### Translations
-
-```php
-Traduction::chargerLangue('fr');
-Traduction::obtenir('messages.key');
-Traduction::chargerLangue('en');
-```
-
-### API Response
-
-```php
-APIResponse::succes($data, $message, 200);
-APIResponse::erreur($message, 400);
-APIResponse::nonAuthentifie($message);
-APIResponse::nonAutorise($message);
-APIResponse::nonTrouve($message);
+    public function destroy(Requete $request, Reponse $response): string
+    {
+        Todo::trouver($request->param('id'))->supprimer();
+        return $this->rediriger('/todos');
+    }
+}
 ```
 
 ---
 
-## 🆘 Troubleshooting
+## 🔍 Points Clés à Retenir
 
-### "Class not found" error
+✅ **Les Routes** définissent comment accéder à votre application
 
-```
-Solution: Run composer dump-autoload
-```
+✅ **Les Contrôleurs** contiennent la logique métier
 
-### Routes not working
+✅ **Les Modèles** communiquent avec la base de données
 
-```
-Solution: Check .htaccess or nginx.conf
-Verify routes/web.php syntax
-```
+✅ **Les Vues** affichent les données en HTML
 
-### Database connection failed
+✅ **La Validation** protège vos données
 
-```
-Solution: Check .env DB_* settings
-Verify database exists
-Check MySQL running
-```
-
-### Tests failing
-
-```
-Solution: Run: composer test
-Check test output for details
-Review tests/bootstrap.php
-```
-
-### Permission denied
-
-```
-Solution: chmod 755 storage/
-Check file ownership
-```
+✅ **Le Message Flash** affiche des messages temporaires
 
 ---
 
-## 📞 Support
+## 🎯 Prochaines Étapes
 
-### Quick Links
+Vous comprenez maintenant le pattern MVC?
 
-- 📖 [Main README](README.md)
-- 📚 [Complete Documentation Index](INDEX_DOCUMENTATION_COMPLETE.md)
-- 💻 [Usage Guide](GUIDE_UTILISATION.md)
-- 📋 [Blog Example](EXEMPLE_BLOG_COMPLET.md)
-- 🧪 [Testing Guide](GUIDE_TESTS_EXECUTION.md)
-- 📦 [Deployment Guide](DEPLOYMENT_CHECKLIST.md)
+**Continuez votre apprentissage:**
 
-### Documentation Structure
+👉 [Chapitre 4: Guide Complet d'Utilisation →](../usage/GUIDE_UTILISATION.md)
 
-- **Getting Started:** GUIDE_RAPIDE_INDEX.md (this file is shorter)
-- **Learning:** GUIDE_UTILISATION.md
-- **Examples:** EXEMPLE_BLOG_COMPLET.md
-- **Testing:** GUIDE_TESTS_EXECUTION.md
-- **Deployment:** DEPLOYMENT_CHECKLIST.md
+**Ou découvrez plus d'exemples:**
+
+👉 [Chapitre 5: Exemples Pratiques →](../../examples/)
 
 ---
 
-## 🎉 You're Ready!
+**Framework BMVC v1.0.0**
 
-```
-✅ Framework installed
-✅ Hello World running
-✅ Routes working
-✅ Database connected
-✅ Tests passing
-✅ Ready to build!
-```
-
-### Build Something Amazing! 🚀
-
-```
-Now that you know the basics:
-
-1. Create your models
-2. Write your routes
-3. Build your controllers
-4. Write tests
-5. Deploy to production
-6. Celebrate! 🎊
-```
-
----
-
-**BMVC Quick Start**
-
-**Time to first route:** < 5 minutes  
-**Time to production:** < 1 hour  
-**Status:** ✅ Ready!
-
-**Start building now!** 🚀
+_Maîtrisez le MVC avec des exemples concrets_ 🚀
