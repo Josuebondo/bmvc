@@ -28,11 +28,7 @@ composer create-project bmvc/bmvc mon-app
 cd mon-app
 ```
 
-**Étape 3:** Installer les dépendances de développement
 
-```bash
-composer install --dev
-```
 
 ✅ **Fait!** Le framework est installé.
 
@@ -139,7 +135,11 @@ Routeur::obtenir('/', 'PageControleur@accueil');
 **Option A: Créer automatiquement avec CLI**
 
 ```bash
-php bmvc make:controller PageController
+php bmvc creer:controller PageController
+```
+ou:
+```bash
+php bmvc -cc PageController
 ```
 
 **Option B: Créer manuellement**
