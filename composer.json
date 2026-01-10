@@ -1,6 +1,6 @@
 {
   "name": "bmvc/bmvc",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "description": "Framework web moderne et professionnel 100% en français - MVC avec CLI, i18n, API REST et Tests",
   "type": "project",
   "license": "MIT",
