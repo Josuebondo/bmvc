@@ -191,12 +191,12 @@ use Core\Reponse;
 /**
  * {NOM} Contrôleur
  */
-class {NOM}
+class {NOM} extends BaseControleur
 {
     /**
      * Exemple d'action
      */
-    public function index(Requete $request, Reponse $response): string
+    public function index(Requete $requete, Reponse $response): string
     {
         return vue('{nom}.index');
     }
@@ -331,7 +331,7 @@ class {NOMCTRL} extends BaseControleur
     public function enregistrer()
     {
         ${nom_var} = {NOM}::creer([
-            'nom' => $this->request()->post('nom'),
+            'nom' => $this->requete()->post('nom'),
         ]);
 
         return redirection('/');
@@ -342,7 +342,7 @@ class {NOMCTRL} extends BaseControleur
      */
     public function editer()
     {
-        $id = $this->request()->param('id');
+        $id = $this->requete()->param('id');
         ${nom_var} = {NOM}::trouver($id);
 
         if (!${nom_var}) {
@@ -357,7 +357,7 @@ class {NOMCTRL} extends BaseControleur
      */
     public function mettreAJour()
     {
-        $id = $this->request()->param('id');
+        $id = $this->requete()->param('id');
         ${nom_var} = {NOM}::trouver($id);
 
         if (!${nom_var}) {
@@ -365,7 +365,7 @@ class {NOMCTRL} extends BaseControleur
         }
 
         ${nom_var}->mettreAJour([
-            'nom' => $this->request()->post('nom'),
+            'nom' => $this->requete()->post('nom'),
         ]);
 
         return redirection('/');
@@ -376,7 +376,7 @@ class {NOMCTRL} extends BaseControleur
      */
     public function supprimer()
     {
-        $id = $this->request()->param('id');
+        $id = $this->requete()->param('id');
         {NOM}::supprimer($id);
         return redirection('/');
     }
