@@ -365,3 +365,15 @@ if (!function_exists('validation_service')) {
         return $service;
     }
 }
+
+if (!function_exists('fichier_url')) {
+    /**
+     * Génère l'URL d'un fichier dans le dossier storage
+     */
+    function fichier_url(string $chemin_fichier): string
+    {
+        $baseUrl = env('URL_APPLICATION', 'http://localhost');
+        $chemin_fichier = ltrim($chemin_fichier, '/');
+        return rtrim($baseUrl, '/') . '/storage/' . $chemin_fichier;
+    }
+}
