@@ -31,7 +31,7 @@ class MenuControleur extends BaseControleur
                 $cheminImage = null;
                 if (!empty($_FILES['image']) && $_FILES['image']['size'] > 0) {
                     // Stocker l'image et récupérer le chemin logique
-                    $cheminImage = StorageManager::put('menus', $_FILES['image']);
+                    $cheminImage = StorageManager::placer('menus', $_FILES['image']);
                 }
 
                 // Créer le menu en base de données
@@ -88,11 +88,11 @@ class MenuControleur extends BaseControleur
                 if (!empty($_FILES['image']) && $_FILES['image']['size'] > 0) {
                     // Supprimer l'ancienne image
                     if ($menu->image) {
-                        StorageManager::delete($menu->image);
+                        StorageManager::supprimer($menu->image);
                     }
 
                     // Stocker la nouvelle
-                    $menu->image = StorageManager::put('menus', $_FILES['image']);
+                    $menu->image = StorageManager::placer('menus', $_FILES['image']);
                 }
 
                 // Mettre à jour
@@ -124,8 +124,8 @@ class MenuControleur extends BaseControleur
         }
 
         // Supprimer l'image du disque
-        if ($menu->image && StorageManager::exists($menu->image)) {
-            StorageManager::delete($menu->image);
+        if ($menu->image && StorageManager::existe($menu->image)) {
+            StorageManager::supprimer($menu->image);
         }
 
         // Supprimer en base
@@ -144,7 +144,7 @@ class MenuControleur extends BaseControleur
     <h1><?= echapper($menu->titre) ?></h1>
 
     <?php if ($menu->image): ?>
-        <img src="<?= \Core\Storage\StorageManager::url($menu->image) ?>" 
+        <img src="<?= \Core\Storage\StorageManager::url($menu->image) ?>"
             class="menu-image">
     <?php endif; ?>
 
@@ -194,14 +194,14 @@ if (!function_exists('fichier_storage')) {
 */
 function fichier_storage(string $path): string
 {
-        return \Core\Storage\StorageManager::url($path);
+return \Core\Storage\StorageManager::url($path);
 
 
 // API COMPLÈTE DU StorageManager
 // ==============================
 
 // Stocker un fichier
-$chemin = StorageManager::put('menus', $_FILES['image']);
+$chemin = StorageManager::placer('menus', $_FILES['image']);
 // Retour : "menus/65a9f23a_1234567890.jpg"
 
 // Obtenir l'URL publique
@@ -209,17 +209,16 @@ $url = StorageManager::url($chemin);
 // Retour : "/storage/menus/65a9f23a_1234567890.jpg"
 
 // Obtenir le chemin complet du disque
-$fullPath = StorageManager::path($chemin);
+$cheminComplet = StorageManager::chemin($chemin);
 // Retour : "/xampp/htdocs/BMVC/storage/uploads/menus/65a9f23a_1234567890.jpg"
 
 // Vérifier si existe
-if (StorageManager::exists($chemin)) {
-// ...
+if (StorageManager::existe($chemin)) {
+    // ...
 }
 
 // Supprimer
-StorageManager::delete($chemin);
-
+StorageManager::supprimer($chemin);
 
 // CONFIGURATION NÉCESSAIRE
 // =======================

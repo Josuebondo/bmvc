@@ -22,9 +22,9 @@ class StorageManager
     protected static string $root = '';
 
     /**
-     * Initialiser la racine (appelée automatiquement)
+     * Obtenir la racine du répertoire de stockage
      */
-    protected static function getRoot(): string
+    protected static function obtenerRacine(): string
     {
         if (empty(self::$root)) {
             self::$root = realpath(dirname(__DIR__) . '/storage/uploads') ?: dirname(__DIR__) . '/storage/uploads';
@@ -35,90 +35,90 @@ class StorageManager
     /**
      * Stocker un fichier uploadé
      * 
-     * @param string $directory Dossier de destination (ex: 'menus', 'articles/images')
-     * @param array $file Tableau $_FILES (ex: $_FILES['image'])
-     * @param ?string $filename Nom personnalisé sans extension (optionnel)
+     * @param string $dossier Dossier de destination (ex: 'menus', 'articles/images')
+     * @param array $fichier Tableau $_FILES (ex: $_FILES['image'])
+     * @param ?string $nom Nom personnalisé sans extension (optionnel)
      * @return string Chemin logique stockable en base (ex: 'menus/65a9f23a.jpg')
      * 
      * @throws \Exception Si le fichier est invalide
      */
-    public static function put(
-        string $directory,
-        array $file,
-        ?string $filename = null
+    public static function placer(
+        string $dossier,
+        array $fichier,
+        ?string $nom = null
     ): string {
         // Vérifier le fichier uploadé
-        if (!isset($file['tmp_name']) || !is_uploaded_file($file['tmp_name'])) {
+        if (!isset($fichier['tmp_name']) || !is_uploaded_file($fichier['tmp_name'])) {
             throw new \Exception("Fichier invalide ou pas uploadé");
         }
 
         // Créer les dossiers si nécessaire
-        self::ensureDirectory($directory);
+        self::creerDossier($dossier);
 
         // Récupérer l'extension
-        $extension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+        $extension = strtolower(pathinfo($fichier['name'], PATHINFO_EXTENSION));
 
         // Générer le nom du fichier
-        $filename = $filename
-            ? sanitizeFilename($filename) . '.' . $extension
+        $nom = $nom
+            ? nettoyerNomFichier($nom) . '.' . $extension
             : uniqid() . '_' . time() . '.' . $extension;
 
         // Chemin complet de destination
-        $destination = self::getRoot() . '/' . trim($directory, '/') . '/' . $filename;
+        $destination = self::obtenerRacine() . '/' . trim($dossier, '/') . '/' . $nom;
 
         // Déplacer le fichier
-        if (!move_uploaded_file($file['tmp_name'], $destination)) {
+        if (!move_uploaded_file($fichier['tmp_name'], $destination)) {
             throw new \Exception("Erreur lors du déplacement du fichier");
         }
 
         // Retourner le chemin logique (sans /storage/uploads/)
-        return trim($directory, '/') . '/' . $filename;
+        return trim($dossier, '/') . '/' . $nom;
     }
 
     /**
-     * Générer l'URL publique d'un fichier
+     * Obtenir l'URL publique d'un fichier
      * 
-     * @param string $path Chemin logique depuis la base (ex: 'menus/65a9f23a.jpg')
+     * @param string $chemin Chemin logique depuis la base (ex: 'menus/65a9f23a.jpg')
      * @return string URL complète (ex: '/storage/menus/65a9f23a.jpg')
      */
-    public static function url(string $path): string
+    public static function url(string $chemin): string
     {
-        return '/storage/' . ltrim($path, '/');
+        return '/storage/' . ltrim($chemin, '/');
     }
 
     /**
      * Récupérer le chemin complet d'un fichier
      * 
-     * @param string $path Chemin logique depuis la base
+     * @param string $chemin Chemin logique depuis la base
      * @return string Chemin complet du système de fichiers
      */
-    public static function path(string $path): string
+    public static function chemin(string $chemin): string
     {
-        return self::getRoot() . '/' . ltrim($path, '/');
+        return self::obtenerRacine() . '/' . ltrim($chemin, '/');
     }
 
     /**
      * Vérifier si un fichier existe
      * 
-     * @param string $path Chemin logique depuis la base
+     * @param string $chemin Chemin logique depuis la base
      * @return bool
      */
-    public static function exists(string $path): bool
+    public static function existe(string $chemin): bool
     {
-        return file_exists(self::path($path));
+        return file_exists(self::chemin($chemin));
     }
 
     /**
      * Supprimer un fichier
      * 
-     * @param string $path Chemin logique depuis la base
+     * @param string $chemin Chemin logique depuis la base
      * @return bool
      */
-    public static function delete(string $path): bool
+    public static function supprimer(string $chemin): bool
     {
-        $fullPath = self::path($path);
-        if (file_exists($fullPath)) {
-            return unlink($fullPath);
+        $cheminComplet = self::chemin($chemin);
+        if (file_exists($cheminComplet)) {
+            return unlink($cheminComplet);
         }
         return false;
     }
@@ -126,12 +126,12 @@ class StorageManager
     /**
      * Créer le dossier s'il n'existe pas
      */
-    protected static function ensureDirectory(string $directory): void
+    protected static function creerDossier(string $dossier): void
     {
-        $fullPath = self::getRoot() . '/' . trim($directory, '/');
+        $cheminComplet = self::obtenerRacine() . '/' . trim($dossier, '/');
 
-        if (!is_dir($fullPath)) {
-            @mkdir($fullPath, 0755, true);
+        if (!is_dir($cheminComplet)) {
+            @mkdir($cheminComplet, 0755, true);
         }
     }
 }
@@ -139,15 +139,15 @@ class StorageManager
 /**
  * Nettoyer un nom de fichier
  */
-if (!function_exists('sanitizeFilename')) {
-    function sanitizeFilename(string $filename): string
+if (!function_exists('nettoyerNomFichier')) {
+    function nettoyerNomFichier(string $nom): string
     {
         // Remplacer les espaces par des underscores
-        $filename = str_replace(' ', '_', $filename);
+        $nom = str_replace(' ', '_', $nom);
 
         // Supprimer les caractères spéciaux
-        $filename = preg_replace('/[^a-zA-Z0-9._-]/', '', $filename);
+        $nom = preg_replace('/[^a-zA-Z0-9._-]/', '', $nom);
 
-        return trim($filename, '._-');
+        return trim($nom, '._-');
     }
 }
