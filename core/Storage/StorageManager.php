@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Core\Storage;
+namespace Core\Storage;
 
 /**
  * ======================================================================
@@ -27,7 +27,7 @@ class StorageManager
     protected static function getRoot(): string
     {
         if (empty(self::$root)) {
-            self::$root = realpath(dirname(__DIR__, 4) . '/storage/uploads') ?: dirname(__DIR__, 4) . '/storage/uploads';
+            self::$root = realpath(dirname(__DIR__) . '/storage/uploads') ?: dirname(__DIR__) . '/storage/uploads';
         }
         return self::$root;
     }

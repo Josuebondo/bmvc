@@ -9,7 +9,7 @@
 // DANS UN CONTRÔLEUR
 // ==================
 
-use App\Core\Storage\StorageManager;
+use Core\Storage\StorageManager;
 
 class MenuControleur extends BaseControleur
 {
@@ -144,9 +144,8 @@ class MenuControleur extends BaseControleur
     <h1><?= echapper($menu->titre) ?></h1>
 
     <?php if ($menu->image): ?>
-        <img src="<?= \App\Core\Storage\StorageManager::url($menu->image) ?>" 
-             alt="<?= echapper($menu->titre) ?>" 
-             class="menu-image">
+        <img src="<?= \Core\Storage\StorageManager::url($menu->image) ?>" 
+            class="menu-image">
     <?php endif; ?>
 
     <p><?= echapper($menu->description) ?></p>
@@ -190,18 +189,12 @@ class MenuControleur extends BaseControleur
 // ==========================================
 
 if (!function_exists('fichier_storage')) {
-    /**
-     * Raccourci pour StorageManager::url()
-     */
-    function fichier_storage(string $path): string
-    {
-        return \App\Core\Storage\StorageManager::url($path);
-    }
-}
-
-// Utilisation simplifiée en vue :
-?>
-<img src="<?= fichier_storage($menu->image) ?>" alt="Menu">
+/**
+* Raccourci pour StorageManager::url()
+*/
+function fichier_storage(string $path): string
+{
+        return \Core\Storage\StorageManager::url($path);
 
 
 // API COMPLÈTE DU StorageManager
@@ -221,7 +214,7 @@ $fullPath = StorageManager::path($chemin);
 
 // Vérifier si existe
 if (StorageManager::exists($chemin)) {
-    // ...
+// ...
 }
 
 // Supprimer
@@ -232,15 +225,15 @@ StorageManager::delete($chemin);
 // =======================
 
 /*
- * 1. Créer le symlink /public/storage → /storage/uploads
- * 
- *    Windows (CMD admin):
- *    mklink /D C:\xampp\htdocs\BMVC\public\storage C:\xampp\htdocs\BMVC\storage\uploads
- * 
- *    Linux/Mac:
- *    ln -s ../storage/uploads public/storage
- * 
- * 2. Ajouter l'helper à Helpers.php (optionnel)
- * 
- * 3. S'assurer que /storage/uploads existe et est writable
- */
+* 1. Créer le symlink /public/storage → /storage/uploads
+*
+* Windows (CMD admin):
+* mklink /D C:\xampp\htdocs\BMVC\public\storage C:\xampp\htdocs\BMVC\storage\uploads
+*
+* Linux/Mac:
+* ln -s ../storage/uploads public/storage
+*
+* 2. Ajouter l'helper à Helpers.php (optionnel)
+*
+* 3. S'assurer que /storage/uploads existe et est writable
+*/
