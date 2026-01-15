@@ -6,104 +6,114 @@ namespace Core;
  * ======================================================================
  * Formulaire - Classe d'aide pour les formulaires HTML
  * ======================================================================
- * 
- * Génère des inputs avec les anciens values et erreurs
+ *
+ * API statique pour générer des champs de formulaire HTML.
  */
 class Formulaire
 {
-    protected array $erreurs = [];
-    protected array $anciens = [];
-
-    public function __construct(array $erreurs = [], array $anciens = [])
-    {
-        $this->erreurs = $erreurs;
-        $this->anciens = $anciens;
-    }
-
     /**
-     * Génère un input text
+     * Génère les attributs HTML (utilisable en statique)
      */
-    public function texte(string $nom, string $label = '', array $attributs = []): string
-    {
-        $valeur = htmlspecialchars($this->anciens[$nom] ?? '', ENT_QUOTES, 'UTF-8');
-        $classe = $this->erreurs[$nom] ? 'formulaire-erreur' : '';
-        $attrs = $this->genererAttributs($attributs);
-
-        return <<<HTML
-        <div class="formulaire-groupe">
-            <label for="$nom">$label</label>
-            <input type="text" id="$nom" name="$nom" value="$valeur" class="$classe" $attrs>
-            {$this->afficherErreur($nom)}
-        </div>
-        HTML;
-    }
-
-    /**
-     * Génère un textarea
-     */
-    public function textarea(string $nom, string $label = '', array $attributs = []): string
-    {
-        $valeur = htmlspecialchars($this->anciens[$nom] ?? '', ENT_QUOTES, 'UTF-8');
-        $classe = $this->erreurs[$nom] ? 'formulaire-erreur' : '';
-        $attrs = $this->genererAttributs($attributs);
-
-        return <<<HTML
-        <div class="formulaire-groupe">
-            <label for="$nom">$label</label>
-            <textarea id="$nom" name="$nom" class="$classe" $attrs>$valeur</textarea>
-            {$this->afficherErreur($nom)}
-        </div>
-        HTML;
-    }
-
-    /**
-     * Génère un input email
-     */
-    public function email(string $nom, string $label = '', array $attributs = []): string
-    {
-        $valeur = htmlspecialchars($this->anciens[$nom] ?? '', ENT_QUOTES, 'UTF-8');
-        $classe = $this->erreurs[$nom] ? 'formulaire-erreur' : '';
-        $attrs = $this->genererAttributs($attributs);
-
-        return <<<HTML
-        <div class="formulaire-groupe">
-            <label for="$nom">$label</label>
-            <input type="email" id="$nom" name="$nom" value="$valeur" class="$classe" $attrs>
-            {$this->afficherErreur($nom)}
-        </div>
-        HTML;
-    }
-
-    /**
-     * Génère un bouton submit
-     */
-    public function soumettre(string $texte = 'Envoyer', array $attributs = []): string
-    {
-        $attrs = $this->genererAttributs($attributs);
-        return "<button type=\"submit\" $attrs>$texte</button>";
-    }
-
-    /**
-     * Affiche l'erreur d'un champ
-     */
-    protected function afficherErreur(string $nom): string
-    {
-        if (isset($this->erreurs[$nom])) {
-            $erreur = implode(', ', (array) $this->erreurs[$nom]);
-            return "<span class=\"formulaire-erreur-message\">$erreur</span>";
-        }
-        return '';
-    }
-
-    /**
-     * Génère les attributs HTML
-     */
-    protected function genererAttributs(array $attributs): string
+    private static function genererAttributsStatic(array $attributs): string
     {
         $html = '';
         foreach ($attributs as $cle => $valeur) {
-            $html .= " $cle=\"$valeur\"";
+            $html .= " $cle=\"" . htmlspecialchars((string) $valeur, ENT_QUOTES, 'UTF-8') . "\"";
         }
         return $html;
+    }
+
+    /**
+     * -------------------------
+     * Méthodes statiques simples
+     * -------------------------
+     */
+
+    public static function texte(string $nom, string $valeur = '', array $attributs = []): string
+    {
+        $attrs = self::genererAttributsStatic($attributs);
+        $val = htmlspecialchars($valeur, ENT_QUOTES, 'UTF-8');
+        return "<input type=\"text\" name=\"$nom\" value=\"$val\"$attrs>";
+    }
+
+    public static function email(string $nom, string $valeur = '', array $attributs = []): string
+    {
+        $attrs = self::genererAttributsStatic($attributs);
+        $val = htmlspecialchars($valeur, ENT_QUOTES, 'UTF-8');
+        return "<input type=\"email\" name=\"$nom\" value=\"$val\"$attrs>";
+    }
+
+    public static function password(string $nom, array $attributs = []): string
+    {
+        $attrs = self::genererAttributsStatic($attributs);
+        return "<input type=\"password\" name=\"$nom\"$attrs>";
+    }
+
+    public static function recherche(string $nom, string $valeur = '', array $attributs = []): string
+    {
+        $attrs = self::genererAttributsStatic($attributs);
+        $val = htmlspecialchars($valeur, ENT_QUOTES, 'UTF-8');
+        return "<input type=\"search\" name=\"$nom\" value=\"$val\"$attrs>";
+    }
+
+    public static function textarea(string $nom, string $valeur = '', array $attributs = []): string
+    {
+        $attrs = self::genererAttributsStatic($attributs);
+        $val = htmlspecialchars($valeur, ENT_QUOTES, 'UTF-8');
+        return "<textarea name=\"$nom\"$attrs>$val</textarea>";
+    }
+
+    public static function select(string $nom, array $options, mixed $valeurSelectionnee = null, array $attributs = []): string
+    {
+        $attrs = self::genererAttributsStatic($attributs);
+        $htmlOptions = '';
+        foreach ($options as $val => $label) {
+            $sel = ((string) $val === (string) $valeurSelectionnee) ? ' selected' : '';
+            $htmlOptions .= '<option value="' . htmlspecialchars((string) $val, ENT_QUOTES, 'UTF-8') . '"' . $sel . '>' . htmlspecialchars((string) $label, ENT_QUOTES, 'UTF-8') . '</option>';
+        }
+        return "<select name=\"$nom\"$attrs>$htmlOptions</select>";
+    }
+
+    public static function checkbox(string $nom, mixed $valeur = 1, bool $cocher = false, array $attributs = []): string
+    {
+        $attrs = self::genererAttributsStatic($attributs);
+        $val = htmlspecialchars((string) $valeur, ENT_QUOTES, 'UTF-8');
+        $checked = $cocher ? ' checked' : '';
+        return "<input type=\"checkbox\" name=\"$nom\" value=\"$val\"$checked$attrs>";
+    }
+
+    public static function radio(string $nom, mixed $valeur, bool $cocher = false, array $attributs = []): string
+    {
+        $attrs = self::genererAttributsStatic($attributs);
+        $val = htmlspecialchars((string) $valeur, ENT_QUOTES, 'UTF-8');
+        $checked = $cocher ? ' checked' : '';
+        return "<input type=\"radio\" name=\"$nom\" value=\"$val\"$checked$attrs>";
+    }
+
+    public static function groupe(string $label, string $champ, ?string $erreur = null): string
+    {
+        $lab = htmlspecialchars($label, ENT_QUOTES, 'UTF-8');
+        $errHtml = $erreur ? '<span class="error">' . htmlspecialchars($erreur, ENT_QUOTES, 'UTF-8') . '</span>' : '';
+        return <<<HTML
+<div class="form-group">
+    <label>$lab</label>
+    $champ
+    $errHtml
+</div>
+HTML;
+    }
+
+    public static function bouton(string $texte, array $attributs = []): string
+    {
+        $attrs = self::genererAttributsStatic($attributs);
+        $txt = htmlspecialchars($texte, ENT_QUOTES, 'UTF-8');
+        return "<button type=\"button\"$attrs>$txt</button>";
+    }
+
+    public static function submit(string $texte = 'Envoyer', array $attributs = []): string
+    {
+        $attrs = self::genererAttributsStatic($attributs);
+        $txt = htmlspecialchars($texte, ENT_QUOTES, 'UTF-8');
+        return "<button type=\"submit\"$attrs>$txt</button>";
     }
 }

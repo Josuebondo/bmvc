@@ -1,154 +1,154 @@
 # Core\Requete - API Reference
 
-Classe pour accéder aux données de la requête HTTP.
+Encapsule la requête HTTP (GET/POST/FILES/headers/URL) et fournit des helpers utilisés par le routeur et les contrôleurs.
 
-## Méthodes
+## Overview
 
-### input(string $key, mixed $default = null): mixed
+- Inputs GET/POST unifiés via `input()` / `tous()`
+- Paramètres d'URL (`param`, `definirParam`)
+- Fichiers uploadés (`fichier` / `file`)
+- Infos requête (`methode`, `chemin`, `url`, `entete`)
+- Détections rapides (`estAjax`, `estApi`, `isJson`)
 
-Récupère la valeur d'un champ de formulaire ou query parameter.
+> L'instance est construite par le kernel; vous ne l'instanciez pas manuellement dans l'app.
+
+## Données d'entrée
+
+### input(string $cle, mixed $defaut = null): mixed
+
+Cherche d'abord en POST puis en GET.
 
 ```php
 $email = $request->input('email');
-$page = $request->input('page', 1); // Avec défaut
+$page = $request->input('page', 1);
 ```
-
-**Paramètres:**
-
-- `$key` - Nom du champ
-- `$default` - Valeur par défaut
 
 ### tous(): array
 
-Retourne tous les inputs (POST + GET).
+Retourne la fusion GET + POST.
+
+### query(string $cle, mixed $defaut = null): mixed
+
+Alias de GET pur.
+
+### obtenir(string $cle, mixed $defaut = null): mixed
+
+Accès direct GET (équivalent à `query()`), retourne `$defaut` si absent.
+
+### publier(string $cle, mixed $defaut = null): mixed
+
+Alias POST pur.
+
+### a(string $cle): bool
+
+Présence de la clé en GET ou POST.
+
+## Paramètres d'URL
+
+### param(string $cle, mixed $defaut = null): mixed
+
+Paramètre extrait du pattern de route (`{id}`, `{slug}`...).
 
 ```php
-$data = $request->tous();
-// ['email' => 'john@example.com', 'name' => 'John']
+// /articles/5
+$id = $request->param('id');
 ```
 
-### query(string $key, mixed $default = null): mixed
+### definirParam(string $cle, mixed $valeur): void
 
-Récupère une valeur de query string (?key=value).
+Assigné par le routeur après matching.
+
+## Fichiers uploadés
+
+### fichier(string $nom): ?array
+
+### file(string $nom): ?array (alias)
+
+Retourne l'entrée `$_FILES[$nom]` ou `null`.
 
 ```php
-$page = $request->query('page', 1);
-$search = $request->query('q');
+$image = $request->file('image');
+if ($image) {
+    move_uploaded_file($image['tmp_name'], 'public/uploads/'.$image['name']);
+}
 ```
 
-### param(string $key): mixed
+## Informations requête
 
-Récupère un paramètre d'URL ({id}, {slug}).
+### methode(): string / method(): string
 
-```php
-// URL: /articles/5
-$id = $request->param('id'); // 5
-```
-
-### method(): string
-
-Récupère la méthode HTTP.
-
-```php
-$method = $request->method(); // GET, POST, PUT, DELETE
-```
-
-### header(string $key, mixed $default = null): mixed
-
-Récupère un header HTTP.
-
-```php
-$accept = $request->header('Accept');
-$auth = $request->header('Authorization');
-```
-
-### file(string $key): array|null
-
-Récupère un fichier uploadé.
-
-```php
-$file = $request->file('image');
-// ['name' => 'photo.jpg', 'tmp_name' => '/tmp/...', 'size' => 1024]
-```
+Méthode HTTP (`GET`, `POST`, ...).
 
 ### is(string $method): bool
 
-Vérifie la méthode HTTP.
+Compare la méthode courante.
 
-```php
-if ($request->is('POST')) {
-    // Formulaire soumis
-}
-```
+### chemin(): string
+
+Chemin sans query string, nettoyé du préfixe d'application (`/BMVC/`), avec support `PATH_INFO`.
+
+### url(): string
+
+URI brute incluant la query string.
+
+### entete(string $nom): ?string / header($nom, $defaut = null)
+
+Accès aux headers (`Authorization`, `Accept`, ...).
+
+## Détections
+
+### estAjax(): bool
+
+Vérifie `X-Requested-With = XMLHttpRequest`.
+
+### estApi(): bool
+
+True si un header `Authorization: Bearer ...` est présent.
 
 ### isJson(): bool
 
-Vérifie si la requête demande du JSON.
+Détecte `Accept` ou `Content-Type` contenant `application/json` ou une requête AJAX.
+
+## Exemples
+
+### Formulaire classique
 
 ```php
-if ($request->isJson()) {
-    return $this->json(['status' => 'ok']);
+public function store(Requete $request)
+{
+    $data = $request->tous();
+    // ...
 }
 ```
 
----
-
-## Exemples Complets
-
-### Récupérer les Données d'un Formulaire
+### Route avec paramètre
 
 ```php
-public function store(Requete $request): string
+public function show(Requete $request)
 {
-    $email = $request->input('email');
-    $name = $request->input('name');
-    $newsletter = $request->input('newsletter', false);
-
-    $user = User::create([
-        'email' => $email,
-        'name' => $name,
-        'newsletter' => (bool) $newsletter
-    ]);
-
-    return $this->json(['id' => $user->id], 201);
+    $id = $request->param('id');
+    return Article::trouver($id);
 }
 ```
 
-### Gérer les Fichiers
+### Upload
 
 ```php
-public function upload(Requete $request): string
-{
-    $file = $request->file('image');
-
-    if (!$file) {
-        return $this->json(['error' => 'No file'], 400);
-    }
-
-    $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
-    $newName = time() . '.' . $ext;
-
-    move_uploaded_file($file['tmp_name'], 'public/uploads/' . $newName);
-
-    return $this->json(['url' => '/uploads/' . $newName]);
+$file = $request->file('photo');
+if (!$file) {
+    return $this->json(['erreur' => 'Fichier manquant'], 400);
 }
 ```
 
-### Pagination
+### Détection API/AJAX
 
 ```php
-public function index(Requete $request): string
-{
-    $page = $request->query('page', 1);
-    $perPage = $request->query('per_page', 10);
+if ($request->estApi()) {
+    return APIResponse::unauthorized();
+}
 
-    $items = Item::paginer($perPage);
-
-    return $this->afficher('items.index', [
-        'items' => $items->items,
-        'total' => $items->total,
-        'page' => $page
-    ]);
+if ($request->estAjax()) {
+    // Retour JSON simplifié
 }
 ```
 

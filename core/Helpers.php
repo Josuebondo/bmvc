@@ -217,6 +217,16 @@ if (!function_exists('ancien')) {
     }
 }
 
+if (!function_exists('old')) {
+    /**
+     * Alias de ancien()
+     */
+    function old(string $cle, string $default = ''): string
+    {
+        return ancien($cle, $default);
+    }
+}
+
 if (!function_exists('flash')) {
     /**
      * Récupère un message flash

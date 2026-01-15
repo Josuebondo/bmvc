@@ -112,9 +112,21 @@ class Requete
     {
         return $this->server['REQUEST_URI'] ?? '/';
     }
+
+    /**
+     * Alias: fichier uploadé
+     */
     public function fichier(string $nom): ?array
     {
         return $this->files[$nom] ?? null;
+    }
+
+    /**
+     * Alias doc: file()
+     */
+    public function file(string $nom): ?array
+    {
+        return $this->fichier($nom);
     }
 
     /**
@@ -145,6 +157,14 @@ class Requete
     }
 
     /**
+     * Alias doc: header()
+     */
+    public function header(string $nom, mixed $default = null): mixed
+    {
+        return $this->entete($nom) ?? $default;
+    }
+
+    /**
      * Obtient une valeur GET ou POST
      */
     public function input(string $cle, mixed $default = null): mixed
@@ -153,10 +173,55 @@ class Requete
     }
 
     /**
+     * Retourne tous les inputs (GET + POST)
+     */
+    public function tous(): array
+    {
+        return array_merge($this->get, $this->post);
+    }
+
+    /**
+     * Alias doc: query()
+     */
+    public function query(string $cle, mixed $default = null): mixed
+    {
+        return $this->get[$cle] ?? $default;
+    }
+
+    /**
      * Vérifie si une clé existe en GET ou POST
      */
     public function a(string $cle): bool
     {
         return isset($this->post[$cle]) || isset($this->get[$cle]);
+    }
+
+    /**
+     * Alias doc: method()
+     */
+    public function method(): string
+    {
+        return $this->methode();
+    }
+
+    /**
+     * Vérifie la méthode HTTP (alias doc: is())
+     */
+    public function is(string $method): bool
+    {
+        return strtoupper($method) === $this->methode();
+    }
+
+    /**
+     * Détermine si la requête attend/contient du JSON (Accept ou Content-Type)
+     */
+    public function isJson(): bool
+    {
+        $accept = $this->entete('Accept') ?? '';
+        $contentType = $this->entete('Content-Type') ?? '';
+
+        return (stripos($accept, 'application/json') !== false)
+            || (stripos($contentType, 'application/json') !== false)
+            || $this->estAjax();
     }
 }
