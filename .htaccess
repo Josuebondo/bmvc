@@ -1,14 +1,22 @@
-
 # Redirection vers public/
+
 <IfModule mod_rewrite.c>
     RewriteEngine On
+    RewriteBase /BMVC/
+    
+    # Ne pas réécrire si c'est déjà un fichier ou dossier existant
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
+    
+    # Ne pas réécrire si c'est déjà dans /public/
+    RewriteCond %{REQUEST_URI} !^/BMVC/public/
+    
+    # Rediriger vers public/
     RewriteRule ^(.*)$ public/$1 [L]
 </IfModule>
 
 # Empêcher l'accès direct aux fichiers sensibles
-<FilesMatch "\.(env|config|log)$">
-    Deny from all
-</FilesMatch>
 
+<FilesMatch "\.(env|config|log)$">
+Deny from all
+</FilesMatch>

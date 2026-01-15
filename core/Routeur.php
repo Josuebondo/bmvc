@@ -134,13 +134,23 @@ class Routeur
         $route = $this->trouverRoute($methode, $chemin);
 
         if ($route === null) {
-            // Lancer une exception 404
+            // Debug: afficher les routes disponibles pour cette méthode
+            error_log("Route non trouvée pour: $methode $chemin");
+            error_log("Routes disponibles:");
+            foreach (self::$routes as $r) {
+                error_log("  " . $r->obtenirMethode() . " " . $r->obtenirChemin());
+            }
             throw new \Core\Exceptions\HttpNotFoundException("Page non trouvée: $chemin");
         }
 
         // Exécuter les middlewares
         foreach ($route->obtenirMiddlewares() as $middleware) {
             // À implémenter selon les middlewares disponibles
+        }
+
+        // Propager les paramètres de route dans la requête
+        foreach ($route->obtenirParametres() as $cle => $valeur) {
+            $requete->definirParam($cle, $valeur);
         }
 
         // Exécuter la route

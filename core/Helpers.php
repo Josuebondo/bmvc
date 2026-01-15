@@ -18,6 +18,26 @@ if (!function_exists('env')) {
     }
 }
 
+if (!function_exists('is_absolute_path')) {
+    /**
+     * Vérifie si un chemin est absolu
+     */
+    function is_absolute_path(string $path): bool
+    {
+        return !empty($path) && ($path[0] === '/' || (strlen($path) > 2 && $path[1] === ':'));
+    }
+}
+
+if (!function_exists('echapper')) {
+    /**
+     * Échappe une valeur HTML (protection XSS)
+     */
+    function echapper(mixed $valeur): string
+    {
+        return htmlspecialchars((string)$valeur, ENT_QUOTES, 'UTF-8');
+    }
+}
+
 if (!function_exists('config')) {
     /**
      * Obtient une valeur de configuration
@@ -212,17 +232,6 @@ if (!function_exists('flash')) {
         $message = $_SESSION['flash'][$type] ?? null;
         unset($_SESSION['flash'][$type]);
         return $message;
-    }
-}
-
-if (!function_exists('url')) {
-    /**
-     * Génère une URL de l'application
-     */
-    function url(string $chemin = ''): string
-    {
-        $base = getenv('URL_APPLICATION') ?: 'http://localhost';
-        return $base . '/' . ltrim($chemin, '/');
     }
 }
 

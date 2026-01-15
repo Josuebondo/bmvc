@@ -55,16 +55,25 @@ class Validateur
 
     /**
      * Valide les données contre les règles
+     * Peut être utilisé de deux façons:
+     * 1. $v->valider($donnees) - utilise les règles ajoutées avec ajouter()
+     * 2. $v->valider($donnees, $regles) - utilise les règles passées en paramètre
      */
-    public function valider(array $donnees): bool
+    public function valider(array $donnees, array $regles = null)
     {
         $this->donnees = $donnees;
         $this->erreurs = [];
 
-        foreach ($this->regles as $champ => $regles) {
+        // Si des règles sont fournies en paramètre, les utiliser
+        if ($regles !== null) {
+            return $this->validerAvecRegles($donnees, $regles);
+        }
+
+        // Sinon, utiliser les règles ajoutées avec ajouter()
+        foreach ($this->regles as $champ => $reglesChamp) {
             $valeur = $donnees[$champ] ?? null;
 
-            foreach ($regles as $regle) {
+            foreach ($reglesChamp as $regle) {
                 // Parse rule like "min:8" into ["min", "8"]
                 $parts = explode(':', $regle, 2);
                 $nom_regle = $parts[0];
@@ -78,6 +87,52 @@ class Validateur
         }
 
         return empty($this->erreurs);
+    }
+
+    /**
+     * Valide avec des règles de style Laravel "required|min:3|max:255"
+     */
+    private function validerAvecRegles(array $donnees, array $regles): array
+    {
+        foreach ($regles as $champ => $reglesStr) {
+            $valeur = $donnees[$champ] ?? null;
+            $reglesListe = explode('|', $reglesStr);
+
+            foreach ($reglesListe as $regle) {
+                // Parser la règle
+                $parts = explode(':', $regle, 2);
+                $nom_regle = trim($parts[0]);
+                $param = isset($parts[1]) ? trim($parts[1]) : null;
+
+                // Gérer les cas spéciaux
+                if ($nom_regle === 'required' && empty($valeur)) {
+                    if (!isset($this->erreurs[$champ])) {
+                        $this->erreurs[$champ] = [];
+                    }
+                    $this->erreurs[$champ][] = "Le champ $champ est requis";
+                    break;
+                }
+
+                if ($nom_regle === 'nullable' && empty($valeur)) {
+                    // La valeur est optionnelle
+                    break;
+                }
+
+                if (!empty($valeur) && !$this->validerRegle($champ, $valeur, $nom_regle, $param)) {
+                    if (!isset($this->erreurs[$champ])) {
+                        $this->erreurs[$champ] = [];
+                    }
+                    $this->ajouterErreur($champ, $nom_regle, $param);
+                    break;
+                }
+            }
+        }
+
+        if (empty($this->erreurs)) {
+            return $donnees;
+        }
+
+        throw new \Exception("Validation échouée: " . json_encode($this->erreurs));
     }
 
     /**

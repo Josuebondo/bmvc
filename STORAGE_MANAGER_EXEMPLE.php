@@ -214,7 +214,7 @@ $cheminComplet = StorageManager::chemin($chemin);
 
 // Vérifier si existe
 if (StorageManager::existe($chemin)) {
-    // ...
+// ...
 }
 
 // Supprimer

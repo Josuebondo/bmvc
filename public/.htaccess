@@ -3,7 +3,8 @@
     RewriteEngine On
     
     # Définir la base correctement
-    RewriteBase /BMVC/
+    # Adapter à ton docroot. Si le site est servi depuis public/ comme racine, garde /
+    RewriteBase /
     
     # Exclure les fichiers et dossiers réels
     RewriteCond %{REQUEST_FILENAME} !-f
