@@ -27,6 +27,11 @@ storage/*
 stockage/*
 !stockage/.gitkeep
 
+# Uploads
+public/uploads/
+public/uploads/**
+test-image-temp.jpg
+
 # Tests
 coverage/
 .phpunit.result.cache
